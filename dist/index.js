@@ -1,4 +1,3 @@
-import { hello } from "./hello";
-hello("안녕");
-hello(555);
-// hello(false);
+const null_1 = null;
+let null_2 = null;
+export {};
