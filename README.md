@@ -35,6 +35,18 @@ let str_3: string = "김밥";
 
 ## 3. boolean 타입
 
+- 프로그래밍에서 false 처럼 사용되는 값 (falshy 한 값)
+- 아래의 경우는 falshy 하다고 판단하여 false 로 인정
+
+```txt
+false
+""        비어있는 문자열은 if 문 等에 사용할 때 false 로 판단
+0         숫자 0 은 if 문 等 에 사용할 때 false로 판단
+null      if 문 等 에 사용 할 때 false 로 판단
+undefined if 문 等 에 사용 할 때 false 로 판단
+NaN       if 문 等 에 사용 할 때 false 로 판단
+```
+
 ```ts
 const boo_1 = false;
 const boo_2: boolean = false;
@@ -43,7 +55,7 @@ let bool_3: boolean = false;
 
 ## 4. null 타입
 
-- 프로그래머가 변수에 값이 비었음을 표현
+- 프로그래머가 변수에 `값이 비었음`을 표현
 
 ```ts
 const null_1 = null;
@@ -54,6 +66,7 @@ let null_2: null = null;
 ## 5. undefined 타입
 
 - 프로그램이 초기값으로 세팅함.
+- 값이 없다. 즉, 정의가 되어있지 않다.
 
 ```ts
 let user: undefined = undefined;
@@ -90,7 +103,7 @@ let b: "안녕" = "안녕";
 let c: true = true;
 ```
 
-## 8. 절대 중복되지 않은 유일무이한 값
+## 8. 절대 `중복되지 않은 유일무이한 값`
 
 ```ts
 const sy = Symbol("age");
