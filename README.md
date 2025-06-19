@@ -1,177 +1,276 @@
-# Reference 데이터 타입
+# 연산
 
-- 기본 Primitive 데이터
+## 1. 사칙연산과 나머지 연산
 
-  - number, string, null, undefined, symbol, boolean
-  - any, unknown, never
-
-- 기본형 데이터가 너무 많다면 묶어서 관리하자!
-  - 이를 참조 타입. 즉, Reference 타입이라고 함.
-  - Reference 타입을 객체 라고 한다.
-
-## 1. 배열(Array)이 있음
-
-### 1.1 배열이 필요한 경우
-
-- (예)사용자 정보를 관리한다
+- 덧셈 연산
 
 ```js
-const user_1: string = "hong";
-const user_2: string = "kim";
-const user_3: string = "park";
+// + (덧셈) 연산
+const a: number = 0;
+const b: number = 5;
+const c: number = a + b; //5
+
+// str + str (글자 + 글자) 연산
+const str_a: string = "hello";
+const str_b: string = "!!!";
+const str_c: string = str_a + str_b; // hello!!!
+
+// str + num (글자 + 숫자) 연산
+const str_a: string = "go";
+const num_b: number = 5;
+const result: string = str_a + num_b; // go5
+
+// str + str (글자 + 글자) 연산
+const str_a: string = "100";
+const str_b: string = "999";
+const result: string = str_a + str_b; // 100999
+
+// 연산자 줄이기
+let a: number = 0;
+a = a + 1; // 결론은 a = 1
+a += 1; // 결론은 2
+a++; // 1 씩 증가 결론은 3
 ```
 
-- 사용자 정보가 너무 많을 경우, 관리(변수명 짓기) 등이 어려움.
-- 문법적으로 원시데이터를 모아서 관리하는 방안이 제시가 되었음. (배열이라고 함)
+- 뺄셈 연산
 
 ```js
-const userArr = ["hong", "kim", "park"]; //편의성 때문에 묶어서 관리
-userArr[0]; //hong
-userArr[1]; //kim
-userArr[2]; //park
-userArr.length;
+// - (뺄셈) 연산
+const a: number = 0;
+const b: number = 1;
+const c: number = a - b; // -1
+
+// str - str (글자 - 글자) 연산
+const a: string = "안녕";
+const b: string = "반가워";
+const c: number = a - b; // 결론 NaN (숫자가 아니다! 라는 뜻)
+
+// case 1 : str - num (글자 - 숫자) 연산
+const a: string = "안녕"; // 숫자로 변경이 가능 하니 ? = no
+const b: number = 5;
+const c: number = a - b; // NaN
+
+// case 2 : str - num (글자 - 숫자) 연산
+const a: string = "100"; // 숫자로 변경이 가능 하니 ? = yes (100)
+const b: number = 5;
+const c: number = a - b; // 95
+
+// 연산자 줄이기
+let a: number = 0;
+a = a - 1; // -1
+a -= 1; // -2
+a--; // -3
 ```
 
-```ts
-// 배열 기호로 데이터 종류 표현하기
-const userArr: string[] = ["hong", "kim", "park"];
-const userAge: number[] = [1, 2, 3, 4];
-const userInfo: (number | boolean | string)[] = ["kr", true, 53];
-
-// Generic 으로 데이터 종류 표현하기
-const userArrGeneric: Array<string> = ["hong", "kim", "park"];
-const userAgeGeneric: Array<number> = [1, 2, 3, 4];
-const userInfoGeneric: Array<number | boolean | string> = ["kr", true, 53];
-```
-
-- 중첩된 배열
-
-```ts
-// 배열 기호로 데이터 종류 표현하기
-const doubleArr: number[][] = [
-  [1, 2],
-  [500, 300],
-];
-
-// Generic 으로 데이터 종류 표현하기
-const doubleArrGeneric: Array<number[]> = [
-  [1, 2],
-  [500, 300],
-];
-
-const doubleArrGeneric2: Array<Array<number>> = [
-  [1, 2],
-  [500, 300],
-];
-```
-
-### 1.2 TypeScript 에만 있는 `튜플(Tuple)`
-
-- 튜플도 배열임
-- 배열의 요소에 타입을 별도로 지정할 수 있음
-- 배열의 길이를 고정 시킬 수 있음
-- 배열의 요소를 제거 또는 추가할 수 없음
-
-```ts
-// 일반 배열
-const ageArr: number[] = [1, 2, 3];
-
-// 튜플 배열 (약속된 값을 지켜야함)
-const numTuple: [number, number, number] = [1, 2, 3];
-const strTuple: [string, string] = ["a", "b"];
-const userTuple: [number, string, boolean] = [1, "a", false];
-const memberTuple: [string, number][] = [
-  ["kim", 1],
-  ["park", 2],
-];
-```
-
-## 2. 객체(Object)가 있음
-
-- 원시데이터를 묶어서 관리함
-- 데이터의 각 요소의 이름. 즉, 속성(Property)를 정해서 관리함
-- 아래 문장을 `객체 literal(작성법)` 이라고 하며, 많이 중요함
+- 곱셈 연산
 
 ```js
-{
-이름: 원시데이터,
-이름: 원시데이터,
+// case 1 : str * str (글자 * 글자) 연산
+const a: string = "100"; // 숫자로 변경이 가능 하니 ? = NO
+const b: string = 5;
+const c: string = a - b; // NaN
+
+// case 2 : str * num (글자 * 숫자) 연산
+const a: string = "100"; // 숫자로 변경이 가능 하니 ? = yes (100)
+const b: number = 5;
+const c: number = a - b; // 500
+
+// 연산자 줄이기
+let a: num;
+```
+
+- 나눗셈 연산
+
+```js
+// case 1 : num * num (숫자 * 숫자) 연산
+const a: number = 0; //
+const b: number = 1;
+const c: number = a / b; // Infinity
+
+// str * str (글자 * 글자) 연산
+const a: string = "안녕"; //숫자로 변경이 가능하니 ? NO
+const b: string = "반가워";
+const c: number = a / b; // NaN
+
+// case 1 : str / str (글자 / 숫자) 연산
+const a: string = "안녕"; // 숫자로 변경이 가능하니 ? NO
+const b: number = 5;
+const c: number = a / b; // NaN
+
+// case 2 : str / num (글자 / 숫자) 연산
+const a: string = "100"; // 숫자로 변경이 가능하니 ? YES (100)
+const b: number = 5;
+const c: number = a / b; // 20
+
+// 연산자 줄이기
+let a: number = 5;
+a = a / 1; // 5
+a /= 1; // 5
+```
+
+- % 연산 (나머지 연산)
+
+```ts
+const a: number = 5;
+const b: number = 2;
+const c: number = a % b; // 1
+// str * str (글자 * 글자) 연산
+const a: string = "안녕"; // 숫자로 변경이 가능하니 ? NO
+const b: string = "반가워";
+const c: number = a % b; // NaN
+
+// case 1 : 글자 / 숫자
+const a: string = "안녕"; // 숫자로 변경이 가능하니 ? NO
+const b: number = 5;
+const c: number = a % b; // NaN
+
+// case 2 : 글자 / 숫자
+const a: string = "100"; // 숫자로 변경이 가능하니 ? YES (100)
+const b: number = 5;
+const c: number = a % b; // 0
+
+// 연산자 줄이기
+let a: number = 5;
+a = a % 2; // 1
+a %= 2; // 1
+```
+
+## 2. 논리 연산자
+
+- true 냐 false 냐 판단하는 것
+- falshy 한 판단
+  - `false - null undefined "" NaN`
+
+```ts
+// OR 연산자 (또는 연산) : 하나만 true 이면 됨. (뒤에 것도 봄)
+const result: boolean = true || true; // true
+const result: boolean = false || true; // true
+const result: boolean = false || false; // false
+
+// AND 연산 (그리고 연산) : 둘 모두 true 이면 된다. (앞에 것 만 봄)
+const result: boolean = true && true; // true
+const result: boolean = false && true; // false
+const result: boolean = false && false; // false
+
+例 )
+const isLogin:boolean = false; //로그인이 안됐다.
+const result:string|boolean = isLogin || "<div>로그인하세요</div>"; //로그인 안됐으니까 로그인 해라
+
+if(isLogin === true) {
+  return "<div>로그인 하세요</div>"
 }
+
+例 )
+const isLogin:boolean = true; //로그인이 되었을 경우
+const result:string|boolean = isLogin && "<div>어서오세요</div>"; //로그인 되었으니까 다시 페이지 되돌아가기
+
+if(isLogin === true) {
+  return "<div>어서오세요</div>"
+}
+
+// Not 연산자 (! = not)
+const a:boolean = !true; // false;
+const a:boolean = !false; // true;
+
+例 )
+// 토글 버튼 만들기 (쓰임새가 많음)
+let isLogin:boolean = false;
+button.addEventListener("click", function(){
+  let isLogin = !isLogin;
+});
 ```
 
-### 2.1 객체의 이해
-
-- 여러명의 사용자 정보를 관리함
-
-만약 배열로 관리 한다면 ?
-
-```js
-const userName = ["hong", "park", "kim"];
-const userAge = [20, 30, 10];
-```
-
-만약 객체 리터럴 관리를 한다면 ?
-
-```js
-const hong = { name: "hong", age: 20 };
-const park = { name: "park", age: 30 };
-const kim = { name: "kim", age: 10 };
-```
+## 3. 비교 연산자 (결과는 true, false 가 나옴)
 
 ```ts
-const hong: {
-  name: string;
-  age: number;
-} = { name: "hong", age: 20 };
+let result: boolean = 1 > 2; // 1이 2보다 크냐 ? NO (false)
+let result: boolean = 1 < 2; // true
 
-const park: {
-  name: string;
-  age: number;
-} = { name: "park", age: 30 };
+let result: boolean = 1 >= 2; // false
+let result: boolean = 1 <= 2; // true
 
-const kim: {
-  name: string;
-  age: number;
-} = { name: "kim", age: 10 };
+let result: boolean = 1 == 2; // false
+let result: boolean = 1 != 2; // true
+
+// 아래 연산자는 동치 연산자라고 해서 데이터 종류/ 데이터 값 모두 비교
+let result: boolean = 1 == 2; // 1이 2와 같은가 ? NO false
+let result: boolean = 1 === 2; // false
+let result: boolean = 1 !== 2; // true
+
+let result: boolean = 1 == "1"; // true
+let result: boolean = 1 === "1"; // false
 ```
 
-- 번외 (내가 만든 `객체 타입 정의`)
+## 4. 3항 연산자 (if 문 줄여쓰기)
 
 ```ts
-type Person = {
-  name: string;
-  age: number;
-};
+const str:string = 조건 ? 참일때 리턴 : 거짓일때 리턴;
 
-const hong: Person = { name: "hong", age: 20 };
-
-const park: Person = { name: "park", age: 30 };
-
-const kim: Person = { name: "kim", age: 10 };
+const str:string = 1 > 2 ? "correct" : "wrong";
 ```
-- 번외 (내가 만든 데이터 `객체 인터페이스`)
-```ts
-interface Person = {
-  name: string;
-  age: number;
-};
-```
-### 3. 객체와 배열 활용
+
+## 5. 병합 연산자 (최신 문법)
+
+- 기본 값을 세팅 할 때 활용함
+- null, undefined 가 아닌 것을 찾아서 세팅함
 
 ```ts
-type Good = { title: string; price: number; sale: boolean };
+let userName: string; //현재 undefined
+let displayName: string = userName ?? "Guest"; //Guest
+// let userName: string; 이 안들어가 있는 경우 displatName 이 들어감.
 
-const goodArr: Good[] = [
-  { title: "사과", price: 1000, sale: true },
-  { title: "딸기", price: 5000, sale: false },
-  { title: "메로나", price: 500, sale: true },
-];
-goodArr[0].title;
-
-const goodArrGeneric: Array<Good> = [
-  { title: "사과", price: 1000, sale: true },
-  { title: "딸기", price: 5000, sale: false },
-  { title: "메로나", price: 500, sale: true },
-];
-goodArrGeneric[0].title;
+let userName: string = "hong"; //현재 undefined, null 이 아님. (hong이다.)
+let displayName: string = userName ?? "Guest"; // hong
 ```
+
+## 6. 옵셔널체이닝 ( 최신 문법 - 기호 : `?.` )
+
+- 객체가 존재하는가 ? 체크 요망
+
+```ts
+const userInfo = { age: 12, name: "hong", city: "Seoul" };
+let age;
+if (userInfo.age) {
+  age = userInfo.age;
+}
+let name;
+if (userInfo.name) {
+  name = userInfo.name;
+}
+let city;
+if (userInfo.city) {
+  city = userInfo.city;
+}
+
+// 위와 같은 문법임.
+// 그래서 위의 복잡한 코드를 쓰지 않고 좀 더 짧게 요약하여 아래 코드를 적용함.
+const userInfo = { age: 12, name: "hong", city: "Seoul" };
+const age = userInfo?.age;
+const name = userInfo?.name;
+const city = userInfo?.city;
+```
+
+## 7.typeof 연산자 ( 너의 데이터 종류는 뭐니 ? )
+
+```ts
+console.log(typeof 123); // number
+console.log(typeof "hello"); // string
+console.log(typeof true); // boolean
+
+const age:number = 123;
+console.log(typeof age); //number;
+
+const age:number[] = [1,2,3];
+console.log(typeof arr); //number[]; 실제로는 object 라고 출력됨
+
+const obj: {age:number} = [age:10];
+console.log(typeof obj); // {age:number}; 실제로는 object 라고 출력됨
+
+type T = { age: number };
+const obj: T = { age: 10 };
+console.log(typeof obj); // T; 실제로는 object 라고 출력됨
+```
+
+- `기본형을 제외하고 참조형 데이터들은 직접 비교를 하는 방안을 찾아야 함`
+ - 타입 좁히기 (Type Guard) 문법, 유틸리티 타입 사용 문법 等 의 학습 필요.
+
