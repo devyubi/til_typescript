@@ -1,276 +1,262 @@
-# 연산
+# 조건문 (Condition)
 
-## 1. 사칙연산과 나머지 연산
+## 1. if 문
 
-- 덧셈 연산
-
-```js
-// + (덧셈) 연산
-const a: number = 0;
-const b: number = 5;
-const c: number = a + b; //5
-
-// str + str (글자 + 글자) 연산
-const str_a: string = "hello";
-const str_b: string = "!!!";
-const str_c: string = str_a + str_b; // hello!!!
-
-// str + num (글자 + 숫자) 연산
-const str_a: string = "go";
-const num_b: number = 5;
-const result: string = str_a + num_b; // go5
-
-// str + str (글자 + 글자) 연산
-const str_a: string = "100";
-const str_b: string = "999";
-const result: string = str_a + str_b; // 100999
-
-// 연산자 줄이기
-let a: number = 0;
-a = a + 1; // 결론은 a = 1
-a += 1; // 결론은 2
-a++; // 1 씩 증가 결론은 3
-```
-
-- 뺄셈 연산
-
-```js
-// - (뺄셈) 연산
-const a: number = 0;
-const b: number = 1;
-const c: number = a - b; // -1
-
-// str - str (글자 - 글자) 연산
-const a: string = "안녕";
-const b: string = "반가워";
-const c: number = a - b; // 결론 NaN (숫자가 아니다! 라는 뜻)
-
-// case 1 : str - num (글자 - 숫자) 연산
-const a: string = "안녕"; // 숫자로 변경이 가능 하니 ? = no
-const b: number = 5;
-const c: number = a - b; // NaN
-
-// case 2 : str - num (글자 - 숫자) 연산
-const a: string = "100"; // 숫자로 변경이 가능 하니 ? = yes (100)
-const b: number = 5;
-const c: number = a - b; // 95
-
-// 연산자 줄이기
-let a: number = 0;
-a = a - 1; // -1
-a -= 1; // -2
-a--; // -3
-```
-
-- 곱셈 연산
-
-```js
-// case 1 : str * str (글자 * 글자) 연산
-const a: string = "100"; // 숫자로 변경이 가능 하니 ? = NO
-const b: string = 5;
-const c: string = a - b; // NaN
-
-// case 2 : str * num (글자 * 숫자) 연산
-const a: string = "100"; // 숫자로 변경이 가능 하니 ? = yes (100)
-const b: number = 5;
-const c: number = a - b; // 500
-
-// 연산자 줄이기
-let a: num;
-```
-
-- 나눗셈 연산
-
-```js
-// case 1 : num * num (숫자 * 숫자) 연산
-const a: number = 0; //
-const b: number = 1;
-const c: number = a / b; // Infinity
-
-// str * str (글자 * 글자) 연산
-const a: string = "안녕"; //숫자로 변경이 가능하니 ? NO
-const b: string = "반가워";
-const c: number = a / b; // NaN
-
-// case 1 : str / str (글자 / 숫자) 연산
-const a: string = "안녕"; // 숫자로 변경이 가능하니 ? NO
-const b: number = 5;
-const c: number = a / b; // NaN
-
-// case 2 : str / num (글자 / 숫자) 연산
-const a: string = "100"; // 숫자로 변경이 가능하니 ? YES (100)
-const b: number = 5;
-const c: number = a / b; // 20
-
-// 연산자 줄이기
-let a: number = 5;
-a = a / 1; // 5
-a /= 1; // 5
-```
-
-- % 연산 (나머지 연산)
+- 조건의 결과가 true 이면 { 안쪽 실행 }
 
 ```ts
-const a: number = 5;
-const b: number = 2;
-const c: number = a % b; // 1
-// str * str (글자 * 글자) 연산
-const a: string = "안녕"; // 숫자로 변경이 가능하니 ? NO
-const b: string = "반가워";
-const c: number = a % b; // NaN
-
-// case 1 : 글자 / 숫자
-const a: string = "안녕"; // 숫자로 변경이 가능하니 ? NO
-const b: number = 5;
-const c: number = a % b; // NaN
-
-// case 2 : 글자 / 숫자
-const a: string = "100"; // 숫자로 변경이 가능하니 ? YES (100)
-const b: number = 5;
-const c: number = a % b; // 0
-
-// 연산자 줄이기
-let a: number = 5;
-a = a % 2; // 1
-a %= 2; // 1
+const age:number = 18;
+ig (age >= 18) {
+  console.log ("성인이십니다.");
+}
 ```
 
-## 2. 논리 연산자
-
-- true 냐 false 냐 판단하는 것
-- falshy 한 판단
-  - `false - null undefined "" NaN`
+- 만약 { 한줄만 실행 한다면? }
 
 ```ts
-// OR 연산자 (또는 연산) : 하나만 true 이면 됨. (뒤에 것도 봄)
-const result: boolean = true || true; // true
-const result: boolean = false || true; // true
-const result: boolean = false || false; // false
+const age: number = 18;
+if (age > 18) console.log("성인이시군요");
+console.log("입장하세요");
+```
 
-// AND 연산 (그리고 연산) : 둘 모두 true 이면 된다. (앞에 것 만 봄)
-const result: boolean = true && true; // true
-const result: boolean = false && true; // false
-const result: boolean = false && false; // false
+-if ~ else
 
-例 )
-const isLogin:boolean = false; //로그인이 안됐다.
-const result:string|boolean = isLogin || "<div>로그인하세요</div>"; //로그인 안됐으니까 로그인 해라
+```ts
+const age: number = 10;
+if (age > 18) {
+  console.log("성인이시군요");
+} else {
+  console.log("나중에 오세요");
+}
+```
 
-if(isLogin === true) {
-  return "<div>로그인 하세요</div>"
+-if ~ else if ~ else if ~ else
+
+```ts
+// 논리적으로 잘못 코딩한 소스
+const age: number = 25;
+if (age > 40) {
+  console.log("40 대 이상입니다");
+} else if (age > 30) {
+  console.log("30 대 이상입니다");
+} else if (age > 20) {
+  console.log("20 대 이상입니다");
+} else {
+  console.log("10 대 입니다");
+}
+```
+
+-
+
+```ts
+const result: number = 0;
+// falshy 한 값이므로 false 로 판단
+// false, null, undefined, "", 0, NaN
+if (result) {
+  console.log("결과 참");
+} else {
+  console.log("결과 거짓");
+}
+```
+
+## Switch 문
+
+- 값이 일치하는지를 비교해서 코드 분기
+
+```ts
+const level: string = "5층";
+switch (level) {
+  case "5층":
+    console.log("5층 내려요");
+    break;
+  case "4층":
+    console.log("4층 내려요");
+    break;
+  case "3층":
+    console.log("3층 내려요");
+    break;
+  case "2층":
+    console.log("2층 내려요");
+    break;
+  case "1층":
+    console.log("1층 내려요");
+    break;
+  default:
+    console.log("값이 아무것도 같지 않다");
+    break;
+}
+```
+
+- switch 문의 값은 직접 원시값으로 작성시 오류발생이 가능
+- TypeScript 에 있는 `enum` 을 사용하시길 권장
+- `enum` 은 정해진 값만 사용하게 권장할 때(열거형)
+- 네트워크(인터넷 상태) 등에 대한 내용을 코드 할때 많이 사용함
+
+```ts
+enum Level {
+  L1 = "1층",
+  L2 = "2층",
+  L3 = "3층",
+  L4 = "4층",
+  L5 = "5층",
+}
+const level: string = "5층";
+switch (level) {
+  case "5층":
+    console.log("5층 내려요");
+    break;
+  case "4층":
+    console.log("4층 내려요");
+    break;
+  case "3층":
+    console.log("3층 내려요");
+    break;
+  case "2층":
+    console.log("2층 내려요");
+    break;
+  case "1층":
+    console.log("1층 내려요");
+    break;
+  default:
+    console.log("값이 아무것도 같지 않다");
+    break;
+}
+```
+
+- 네트워크 상태 체크
+
+```ts
+enum NetworkStatus {
+  Offline = "Off",
+  Wifi = "Wifi",
+  LTE = "LTE",
+  G5 = "5G",
 }
 
-例 )
-const isLogin:boolean = true; //로그인이 되었을 경우
-const result:string|boolean = isLogin && "<div>어서오세요</div>"; //로그인 되었으니까 다시 페이지 되돌아가기
+switch (net) {
+  case NetworkStatus.Offline:
+    break;
+  case NetworkStatus.Wifi:
+    break;
+  case NetworkStatus.LTE:
+    break;
+  case NetworkStatus.G5:
+    break;
+}
+```
 
-if(isLogin === true) {
-  return "<div>어서오세요</div>"
+# 반복문(Loop)
+
+- 조건이 참이면 코드를 반복 실행함
+
+## 1. for
+
+- 조건이 참이면서 몇번 반복을 해야하는지 (반복 횟수를 알고 있을 때) 사용함
+
+```ts
+const 반복횟수: number = 10;
+for (let 초기값: number = 0; 초기값 < 반복횟수; 초기값 = 초기값 + 1) {
+  //코드 실행
 }
 
-// Not 연산자 (! = not)
-const a:boolean = !true; // false;
-const a:boolean = !false; // true;
-
-例 )
-// 토글 버튼 만들기 (쓰임새가 많음)
-let isLogin:boolean = false;
-button.addEventListener("click", function(){
-  let isLogin = !isLogin;
-});
-```
-
-## 3. 비교 연산자 (결과는 true, false 가 나옴)
-
-```ts
-let result: boolean = 1 > 2; // 1이 2보다 크냐 ? NO (false)
-let result: boolean = 1 < 2; // true
-
-let result: boolean = 1 >= 2; // false
-let result: boolean = 1 <= 2; // true
-
-let result: boolean = 1 == 2; // false
-let result: boolean = 1 != 2; // true
-
-// 아래 연산자는 동치 연산자라고 해서 데이터 종류/ 데이터 값 모두 비교
-let result: boolean = 1 == 2; // 1이 2와 같은가 ? NO false
-let result: boolean = 1 === 2; // false
-let result: boolean = 1 !== 2; // true
-
-let result: boolean = 1 == "1"; // true
-let result: boolean = 1 === "1"; // false
-```
-
-## 4. 3항 연산자 (if 문 줄여쓰기)
-
-```ts
-const str:string = 조건 ? 참일때 리턴 : 거짓일때 리턴;
-
-const str:string = 1 > 2 ? "correct" : "wrong";
-```
-
-## 5. 병합 연산자 (최신 문법)
-
-- 기본 값을 세팅 할 때 활용함
-- null, undefined 가 아닌 것을 찾아서 세팅함
-
-```ts
-let userName: string; //현재 undefined
-let displayName: string = userName ?? "Guest"; //Guest
-// let userName: string; 이 안들어가 있는 경우 displatName 이 들어감.
-
-let userName: string = "hong"; //현재 undefined, null 이 아님. (hong이다.)
-let displayName: string = userName ?? "Guest"; // hong
-```
-
-## 6. 옵셔널체이닝 ( 최신 문법 - 기호 : `?.` )
-
-- 객체가 존재하는가 ? 체크 요망
-
-```ts
-const userInfo = { age: 12, name: "hong", city: "Seoul" };
-let age;
-if (userInfo.age) {
-  age = userInfo.age;
-}
-let name;
-if (userInfo.name) {
-  name = userInfo.name;
-}
-let city;
-if (userInfo.city) {
-  city = userInfo.city;
+const arr: number[] = [1, 2, 3];
+for (let i: number = 0; i < arr.length; i = i + 1) {
+  arr[i];
 }
 
-// 위와 같은 문법임.
-// 그래서 위의 복잡한 코드를 쓰지 않고 좀 더 짧게 요약하여 아래 코드를 적용함.
-const userInfo = { age: 12, name: "hong", city: "Seoul" };
-const age = userInfo?.age;
-const name = userInfo?.name;
-const city = userInfo?.city;
+const num: number = 10;
+for (let i: number = 0; i < total; i += 1) {
+  if (i === 5) {
+    break;
+    //break = for 구문을 벗어남 (for 중지)
+    // continue = 실행코드를 건너뛰고 계속 반복
+  }
+  //실행코드
+}
 ```
-
-## 7.typeof 연산자 ( 너의 데이터 종류는 뭐니 ? )
 
 ```ts
-console.log(typeof 123); // number
-console.log(typeof "hello"); // string
-console.log(typeof true); // boolean
+const total: number = 10;
+for (let i: number = 0; i < total; i += 1) {
+  if (i === 5) {
+    break; // for 구문을 벗어남
+  }
+  // 실행코드
+}
 
-const age:number = 123;
-console.log(typeof age); //number;
-
-const age:number[] = [1,2,3];
-console.log(typeof arr); //number[]; 실제로는 object 라고 출력됨
-
-const obj: {age:number} = [age:10];
-console.log(typeof obj); // {age:number}; 실제로는 object 라고 출력됨
-
-type T = { age: number };
-const obj: T = { age: 10 };
-console.log(typeof obj); // T; 실제로는 object 라고 출력됨
+const total: number = 10;
+for (let i: number = 0; i < total; i += 1) {
+  if (i === 5) {
+    continue; // 실행 코드를 건너뛰고 계속 반복
+  }
+  // 실행코드
+}
+const total: number = 10;
+for (let i: number = 0; i < total; i += 1) {
+  for (let j: number = 0; j < 5; j++) {
+    if (j === 2) {
+      break;
+    }
+  }
+}
 ```
 
-- `기본형을 제외하고 참조형 데이터들은 직접 비교를 하는 방안을 찾아야 함`
- - 타입 좁히기 (Type Guard) 문법, 유틸리티 타입 사용 문법 等 의 학습 필요.
+## 2. while
 
+- 조건이 참이면서 몇번 반복을 해야하는지 (반복 횟수를 모를 때) 사용함
+
+```ts
+let count: number = 0;
+while (count < 5) {
+  //실행하라.
+  count = count + 1; // 반드시 조건을 거짓으로 만들도록 코딩해야함.
+}
+```
+
+## 3. do ~ while
+
+- `일단 한번은 실행`해보고, 조건이 참이면서 몇번 반복을 해야하는지 (반복 횟수를 모를 때) 사용
+
+```ts
+// 조건이 거짓이므로 아래 코드는 한번도 실행되지 않음.
+let count: number = 0;
+while (count < 5) {
+  //실행하라.
+  count = count + 1; // 반드시 조건을 거짓으로 만들도록 코딩해야함.
+}
+
+let tries: number = 0;
+do {
+  // 할일 코드 실행
+  // 무한 루프 방지를 위해 거짓을 만들 값
+  tries = tries + 1;
+} while (tries < 5);
+```
+
+## 4. for ... of
+
+- 배열의 각각의 요소에 값을 알아낼 때
+
+```ts
+const arr: number[] = [1, 2, 3];
+for (let i: number = 0; i < arr.length; i = i + 1) {
+  arr[i];
+}
+
+// 위 아래 모두 같은 코드.
+
+for (let item of arr) {
+item; //1    2    3
+}
+```
+
+## 4. for ... in
+
+- `객체`의 `속성명`을 알아낼 때
+```ts
+const hong = {age:10,city:"deagu"};
+for (let ket in hong) {
+  key; // age   city
+  hong[key]; //10   deagu
+}
+```
