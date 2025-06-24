@@ -1,475 +1,156 @@
-# 범위 (Scope)
+# Object (객체) 정리
 
-- 변수가 살아남는 범위
-- 변수를 찾아서 사용할 수 있는 범위
-
-## 1. Scope 종류
-
-- `전역` 스코프 : 코드에서 어디에서든 접근 및 사용 가능 (var, let, const)
-- `지역` 스코프 : `function` 또는 `{ }` 안쪽에서만 사용 가능
-- `블록` 스코프 : `{ }` 블록 안에서만 사용 가능 (if, for 등에서 let, const)
-
-## 2. 전역 스코프 (global scope) 간단예제
-
-- 코드 어디서나 사용할 수 있는 범위
+- 데이터와 데이터를 다루는 기능을 가진 결과물
 
 ```js
-let message = "안녕"; // 전역 스코프
-function sayHello() {
-  console.log(message);
+/** const 객체명 = {
+    데이터명 : 데이터값;
+    기능명 : function(){데이터 가공}
+    }
+**/
+
+const 객체명 = {
+    속성명 : 속성값;
+    메소드 : function(){데이터 가공}
 }
-sayHello();
 ```
 
-```ts
-let message: string = "안녕";
-function sayHello(): void {
-  console.log(message);
-}
-const sayHello = (): void => {
-  console.log(message);
+## 1. 가장 간단하게 객체를 만드는 법
+
+- 타이핑으로 객체 `{}` 를 적어서 만든다고 해서 `객체 리터럴` 이라고 함
+- 객체 리터럴로 만들 경우 무조건 지키기.
+
+```js
+const 객체명 = {
+  속성명1: 속성값,
+  속성명2: 속성값,
 };
-sayHello();
 ```
 
-## 3. 지역 스코프 (local scope) 간단예제
+- 만약 한개의 객체를 생성하는 경우라면 추천
+- 만약 한개의 객체를 생성하는 경우라면 이름은 `카멜케이스` 로 하기. (규칙임)
 
 ```js
-function sayHello() {
-  let message = "안녕";
-  console.log(message);
-}
-sayHello();
+const personInfo = {
+  nickName: "문유비",
+  age: 29,
+  job: "학생",
+};
 ```
 
-```ts
-function sayHello(): void {
-  let message: string = "안녕";
-  console.log(message);
-}
-const sayHello = ():void {
-    console.log(message)
-}
-sayHello();
-```
+## 2. 객체를 무한하게 생성하는 함수 작성
 
-## 4. 전역과 지역 스코프 간단예제
+- 여러개의 객체를 생성하는 경우는 파스칼 케이스 를 함수이름으로 지정하기. (규칙임)
 
 ```js
-let message = "안녕";
-function sayHello() {
-  let message = "hi~";
-  console.log(message);
+function PersonInfo() {
+  this.name = "문유비";
+  this.age = 20;
+  this.job = "학생";
 }
-sayHello(); // hi~ 출력 (지역 스코프가 우선 순위임)
 ```
 
-```ts
-let message: string = "안녕";
-function sayHello(): void {
-  let message: string = "hi~";
-  console.log(message);
-}
-sayHello(); // hi~ 출력 (지역 스코프가 우선 순위임)
-```
-
-## 5. 블록 스코프 간단예제
-
-- var 가 스트레스를 준다.
-- 옛날 코딩에는 var 를 사용했음. (문제가 많음)
+- 절대로 주의 해야 할 것
+- 객체를 생성하고 싶은 경우 new 를 꼭 붙여야함.
 
 ```js
-// 블록 스코프 예제
-const age = 0;
-{
-  const age = 10;
-  const subject = "공부";
+function PersonInfo() {
+  this.name = "문유비";
+  this.age = 20;
+  this.job = "학생";
 }
-console.log(age); // 0 이 출력 (const는 상수.)
-console.log(subject); // 오류, Not defined ...
+
+PersonInfo(); //함수 실행으로 진행
+new PersonInfo(); // 함수 실행 결과로 객체를 생성함
 ```
 
-```ts
-// 블록 스코프 예제
-const age: number = 0;
-{
-  const age: number = 10;
-  const subject: string = "공부";
-}
-console.log(age); // 0 이 출력 (const는 상수.)
-console.log(subject); // 오류, Not defined ...
-```
+## 3. 케이스를 구분해서 생각해보기
 
-- var는 scope 가 규칙적이지 않고, 무조건 전역으로 생성 됨
+### 1. 그냥 함수로 사용한다면 ?
+
+- 아래처럼 함수를 실행하면 this 가 window 가 됨
+- 우리가 원하는 값이 아님
 
 ```js
-var age = 0;
-{
-  var age = 10;
-  var subject = "공부";
-}
-console.log(age); // 10 이 출력 (const는 상수.)
-console.log(subject); // 공부
-```
-
-```ts
-var age: number = 0;
-{
-  var age: number = 10;
-  var subject: string = "공부";
-}
-console.log(age); // 10 이 출력 (const는 상수.)
-console.log(subject); // 공부
-```
-
-- var 는 `{ }` 블록 스코프는 없고, function 지역 스코프는 있음
-
-```js
-var age = 0;
-function showAge() {
-  var age = 100;
+function PersonInfo() {
+  this.name = "문유비";
+  this.age = 20;
+  this.job = "학생";
 }
 
-console.log(age);
-showAge();
-console.log(age); // 0 이 출력
-```
+PersonInfo();
 
-```ts
-var age: number = 0;
-function showAge(): void {
-  var age = 100;
+/** 실행 결과 : 자동으로 window / var 로 바뀜
+ * function PersonInfo() {
+  window.name = "문유비";
+  window.age = 20;
+  window.job = "학생";
 }
 
-console.log(age); // 0 출력
-showAge();
-console.log(age); // 0 이 출력
-```
+PersonInfo();
 
-## 6. 전체 scope 정리
+--------------
+  var.name = "문유비";
+  var.age = 20;
+  var.job = "학생";
 
-- let, const 는 `{ }` 에 따라 scope가 정리 됨
-
-```js
-let age = 0;
-const job = "학생";
-{
-  let age = 100;
-  let job = "개발자";
-}
-function showPerson() {
-  let age = 400;
-  let job = "요리사";
-}
-if (true) {
-  let age = 800;
-  let job = "직원";
-}
-```
-
-- var 는 function 에 따라 스코프가 정리 됨
-
-```js
-var age = 0;
-var job = "학생";
-{
-  var age = 100;
-  var job = "개발자";
-}
-function showPerson() {
-  var age = 400;
-  var job = "요리사";
-}
-if (true) {
-  var age = 800;
-  var job = "직원";
-}
-```
-
-## 7. Q & A
-
-```js
-if (true) {
-  let age = 100;
-}
-console.log(age); // Error
+위와 같은 값이 나타남.
+/
 ```
 
 ```js
-if (true) {
-  var age = 100;
-}
-console.log(age); // 100
-```
-
-## Hoisting 의 이해 (변수에서)
-
-- 만들지 않았는데 사용 가능 한 것 (좋지 않음)
-
-```js
-console.log(age); // Error
-let age = 10;
-```
-
-```js
-console.log(age); // Error
-const age = 10;
-```
-
-```js
-let age = 10;
-console.log(age); // 10
-```
-
-## 2. hoisting 이 일어나는 경우
-
-```js
-console.log(age); // undefined
-var age = 10;
-console.log(age); // 10
-```
-
-# 변수의 재정의
-
-## 1. 재정의가 불가능한 경우
-
-```js
-let age = 10;
-let age = 100;
-
-const job = "학생";
-const job = "개발자";
-```
-
-## 1.2 가능한 경우
-
-```js
-let age = 10;
-{
-  let age = 100;
+function PersonInfo() {
+  this.name = "문유비";
+  this.age = 20;
+  this.job = "학생";
 }
 
-const job = "학생";
-{
-  const job = "개발자";
+
+const user = new PersonInfo(); // 객체 생성자 함수 실행으로 진행
+/** 하단은 우리가 원한 user 에 담긴 객체
+ name : "문유비";
+  age : 20;
+  job : "학생"; /
+```
+
+## 4. 객체의 항목을 참조하는 법
+
+- `.` 으로 참조하는 법
+
+```js
+const 유비 = {
+  age: 29,
+  name: "문유비",
+};
+console.log(유비.age);
+console.log(유비.name);
+```
+
+- 연관배열 방식으로 항목 참조하는 법
+
+```js
+const 유비 = {
+  age: 29,
+  name: "문유비",
+};
+console.log(유비["age"]);
+console.log(유비["name"]);
+```
+
+- for ... in 방식으로 항목 참조하는 법
+
+```js
+const 유비 = {
+  age: 29,
+  name: "문유비",
+};
+console.log(유비.age);
+console.log(유비.name);
+
+for (let key in 유비) {
+  console.log(key); // "age", "name"
+  유비[key];
 }
 ```
 
-## 2. 막~ 재정의하는 경우
-
-```js
-var age = 10;
-var age = 100;
-
-var job = "학생";
-var job = "개발자";
-```
-
-```js
-var age = 10;
-{
-  var age = 100;
-}
-
-var job = "학생";
-{
-  var job = "개발자";
-}
-```
-
-# 그렇다면 let, const, var 중에 무엇을 우선으로 할까 ?
-
-## 1. 무조건 const 로 한다.
-
-```js
-const age = 0;
-```
-
-## 2. 코딩을 하다보니 값이 변경이 되어야 한다면 ?
-
-- 진행중에 필요에 의해 let 으로 수정한다. (하다보니 바뀌어야 한다면 let)
-
-```js
-const age = 0;
-
-age = 17;
-```
-
-# 함수에서의 scope
-
-## 1. 중첩함수
-
-- 데이터를 숨기고, 기능도 숨기고
-- 안전한 코드가 구성됨
-
-```js
-function 외부() {
-  const nickName = "문유비";
-  // 중첩함수
-  function 내부() {
-    console.log(nickName);
-  }
-  내부();
-}
-
-console.log(nickName); // Error
-내부(); // Error
-
-외부();
-```
-
-```ts
-function 외부(): void {
-  const nickName: string = "문유비";
-  // 중첩함수
-  function 내부(): void {
-    console.log(nickName);
-  }
-  내부();
-}
-
-console.log(nickName); // Error
-내부(); // Error
-
-외부();
-```
-
-## 2. 함수 외부 변수 접근 제한
-
-- 데이터를 숨긴다. (password)
-- 원하는 동작만으로 데이터를 확인 시킨다. (내부함수)
-
-```js
-function 외부() {
-  // 비밀번호 박스를 만든 아자씨
-  const pasword = "1234";
-  function 내부() {
-    // 그 박스를 여는 열쇠
-    return password;
-  }
-  return 내부;
-}
-
-const 기능 = 외부();
-const result = 기능();
-password; // 오류
-```
-
-```ts
-type ReturnType = () => string;
-function 외부(): () => ReturnType {
-  // string 을 리턴하는 함수라서 : () => string 을 붙여줌.
-  // 리턴하는 함수는 void 붙이는거 아님.
-  const pasword: string = "1234";
-  function 내부(): string {
-    return password;
-  }
-  return 내부;
-}
-
-const 기능 = 외부();
-const result = 기능();
-password; // 오류
-```
-
-## 3. 클로저 (closure)
-
-- 함수는 실행하고 나면 함수 종료시 함수 내부의 변수는 제거됨
-- 그런데 함수를 실행하고 함수 종료 후에도 내부 변수를 유지하는 것
-- 일반적 함수는 데이터 유지를 못하고 사라짐
-
-```js
-// 클로저 아님
-function showAge() {
-  const age = 10;
-  console.log(age);
-}
-showAge();
-```
-
-```ts
-function showAge(): void {
-  const age: number = 10;
-  console.log(age);
-}
-showAge();
-```
-
-- 클로저로 변수값 유지하기
-
-```js
-function showAge() {
-  let age = 10;
-
-  return function () {
-    age = age + 1;
-    return age;
-  };
-}
-const a = showAge();
-a(); // 11
-a(); // 12
-```
-
-```ts
-type ReturnType = () => number;
-function showAge(): ReturnType {
-  let age = 10;
-
-  return function (): number {
-    age = age + 1;
-    return age;
-  };
-}
-const a: ReturnType = showAge();
-a(); // 11
-a(); // 12
-```
-
-- 클로저로 배열의 요소 관리하기
-
-```js
-function createList() {
-  let itemArr = [];
-  return {
-    // add(재료) : 재료를 담으면 itemArr 에 추가한다.
-    add(item) {
-      itemArr.push(item);
-    },
-    // show() : 전체 itemArr 보여주기
-    show() {
-      return itemArr;
-    },
-  };
-}
-// itemArr;
-// Error. Scope 위반
-
-const myList = createList();
-mylist.add("사과");
-mylist.add("딸기");
-mylist.show(); // ["사과", "딸기"]
-```
-
-```ts
-type ReturnType = { add: (item: string) => void; show: () => string[] };
-function createList(): ReturnType {
-  let itemArr: string[] = [];
-
-  return {
-    add(item) {
-      itemArr.push(item);
-    },
-    show() {
-      return itemArr;
-    },
-  };
-}
-
-const myList: ReturnType = createList();
-myList.add("사과");
-myList.add("딸기");
-myList.show();
-```
-
-- 클로저는 함수 안쪽의 데이터를 유지함. (함수가 종료되더라도 유지)
+## 5. 객체에 기능 추가하기 (메소드)
