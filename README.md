@@ -11,6 +11,39 @@ for (let i = 0; i < arr.length; i++) {
 }
 ```
 
+```ts
+const arr: number[] = [1, 2, 3, 4];
+
+for (let i = 0; i < arr.length; i++) {
+  console.log(arr[i]); // 1, 2, 3, 4
+}
+```
+
+```ts
+// for ...ㅇf문
+const arr: number[] = [1, 2, 3, 4];
+
+for (const num of arr) {
+  console.log(num); // 1, 2, 3, 4
+}
+```
+
+```ts
+// forEach 문
+const arr: number[] = [1, 2, 3, 4];
+
+arr.forEach((num) => {
+  console.log(num); // 1, 2, 3, 4
+});
+```
+
+```ts
+// 배열 메서드를 사용한 방식
+arr.forEach((num, index) => {
+  console.log(index, num);
+});
+```
+
 - forEach
 
 ```js
@@ -173,4 +206,3 @@ const c = obj["city"];
 // 객체 구조 분해 할당 (destructuring)
 const { age: a, age: b, city: c } = obj;
 ```
-
