@@ -64,6 +64,24 @@ arr.forEach((item, index) => {
 });
 ```
 
+```ts
+const arr: number[] = [1, 2, 3, 4];
+arr.forEach(function (요소, 인덱스, 원본배열) {
+  console.log(요소); // 1,2,3,4
+});
+arr.forEach((요소, 인덱스, 원본배열) => {
+  console.log(요소); // 1,2,3,4
+});
+// 아래 구문이 많이 사용되는 형태이다.
+arr.forEach((요소, 인덱스) => {
+  console.log(요소); // 1,2,3,4
+});
+arr.forEach((item, index) => {
+  console.log(index); // 0,1,2,3
+  console.log(item); // 1,2,3,4
+});
+```
+
 - map : 원본 배열에서 새로운 배열을 만든다. (별표 10만개)
 
 ```js
@@ -80,8 +98,29 @@ const resultArr = arr.map((요소, 인덱스) => {
 });
 ```
 
+```ts
+const arr: number[] = [1, 3, 5, 2];
+arr.map(function (요소, 인덱스, 원본배열) {
+  return 요소 + 1; // 2, 4, 6, 3
+});
+arr.map((요소, 인덱스, 원본배열) => {
+  return 요소 + 1; // 2, 4, 6, 3
+});
+// 아래처럼 주로 사용합니다.
+const resultArr = arr.map((요소, 인덱스) => {
+  return 요소 + 1; // 2, 4, 6, 3
+});
+```
+
 ```js
 const arr = [10, 20, 11, 24];
+const resultArr = arr.map((item, index) => {
+  return `<div class="box">${item}</div> `;
+});
+```
+
+```ts
+const arr: number[] = [10, 20, 11, 24];
 const resultArr = arr.map((item, index) => {
   return `<div class="box">${item}</div> `;
 });
@@ -111,6 +150,21 @@ for (key in obj) {
 }
 ```
 
+```ts
+type User = { age: number; nickName: string; isMember: boolean };
+const obj: User = {
+  age: 10,
+  nickName: "hong",
+  isMember: true,
+};
+
+for (const key in obj) {
+  const typedKey = key as keyof User;
+  console.log(typedKey); // age, nickName, isMember
+  console.log(obj[typedKey]); // 10, hong, true
+}
+```
+
 - Object.keys(객체).forEach : 참조만 하자.
 
 ```js
@@ -123,6 +177,21 @@ Object.keys(obj); // [age, nickName, isMember]
 Object.keys(obj).forEach(function (요소, 인덱스, 원본) {});
 Object.keys(obj).forEach((요소, 인덱스, 원본) => {
   console.log(요소); // age, nickName, isMember
+});
+```
+
+```ts
+type User = { age: number; nickName: string; isMember: boolean };
+
+const obj: User = {
+  age: 10,
+  nickName: "hong",
+  isMember: true,
+};
+Object.keys(obj).forEach((key) => {
+  const typedKey = key as keyof User;
+  console.log(typedKey); // 'age' | 'nickName' | 'isMember'
+  console.log(obj[typedKey]); // 10, "hong", true
 });
 ```
 
