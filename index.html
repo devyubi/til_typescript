@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * 지정된 주소로 Http 요청을 보내고 결과를 함수로 처리함.
+       *
+       * @param {string} addr - 요청을 보낼 URL (예: "posts", "albums")
+       * @param {"GET"|"POST"|"PUT"|"DELETE"|"PATCH" } method - HTTP 메소드 종류
+       */
+      async function getData(addr, method) {
+        // 주소
+        const url = `https://jsonplaceholder.typicode.com/${addr}`;
+        try {
+          const response = await fetch(url, { method });
+          if (response.ok) {
+            return response.json();
+          }
+          return null;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      function postsParse(_data) {
+        console.log("게시글 결과 ==== ");
+        console.log(_data);
+      }
+      function albumsParse(_data) {
+        console.log("앨범 결과 ==== ");
+        console.log(_data);
+      }
+      function photosParse(_data) {
+        console.log("사진 결과 ==== ");
+        console.log(_data);
+      }
+      function todosParse(_data) {
+        console.log("할일 결과 ==== ");
+        console.log(_data);
+      }
+
+      async function getAllData() {
+        try {
+          const postData = await getData("posts", "GET");
+          postsParse(postData);
+
+          const albumsData = await getData("albums", "GET");
+          albumsParse(albumsData);
+
+          const photosData = await getData("photos", "GET");
+          photosParse(photosData);
+
+          const todosData = getData("todos", "GET");
+          todosParse(todosData);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      getAllData();
+    </script>
+  </body>
+</html>

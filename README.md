@@ -1,277 +1,416 @@
-# 객체(`{}`)와 배열(`[]`)의 반복문
+# Asynchronous (비동기)
 
-## 1. 배열의 반복문
+- `비동기 처리` 란 js 에서 너무 오래 시간 소비를 하는 작업
+- 1. 백엔드 서버에게 자료를 요청하고 회신을 기다리는 경우
+- 2. 파일을 읽어들이고, 서버로 파일을 전송하고 결과를 기다리는 경우
+- 비동기 처리는 시간이 많이 걸리는 작업 진행 중에 다른 일도 `병렬로 처리` 하도록 함.
 
-- for 문
+## 1. 종류
+
+- XHR (Xml Http Request)
+- Callback 함수 : 자료를 요청을 하고 자료가 오면 나중에 실행하는 함수
+- Promise
+- async / await
+
+## 2. Dummy/Mockup 사이트 (BE 자료를 회신)
+
+- https://jsonplaceholder.typicode.com/
+- https://www.data.go.kr/
+
+## 3. BE 데이터 API 확인 프로그램
+
+- PostMan 설치 및 활용 필요
+- https://www.postman.com/
+- BE 측에 Swagger 구성을 요청하면 참 좋음
+
+## 4. XHR (Xml Http Request)
+
+- `Request` : 자료 요청
+- `Response` : 결과 회신
+- `Query` : Request를 한 문자열.
+
+### 4.1. 쿼리의 이해
+
+- `https://isearch.interpark.com/result?q=부산&referrer=`
+- 도메인 : `https://isearch.interpark.com`
+- 라우터 경로 : `/result`
+- 쿼리(자료요청 문자열)의 시작 : `?`
+- 실제쿼리 : `q=부산&referrer=`
+
+### 4.2. 실제쿼리 상세 설명
+
+- 실제쿼리 : `q=부산&referrer=`
+- q (= 변수) = 부산
+- `&` 로 구분
+- 변수 referrer = null
+
+### 4.3 Query 예제
+
+- https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/
+
+### 4.4 쿼리를 전송시에는 5가지 방식으로 보낼 수 있다.
+
+- GET : 자료를 주세요 (DB에서 자료를 읽고 결과 회신)
+- POST : 자료를 전송합니다 (DB에서 자료 한개 추가)
+- DELETE : 자료를 삭제하세요 (DB에서 자료 한개 삭제)
+- PUT : 하나의 자료내용 전부를 교체하세요 (DB에서 자료 한개 전체 수정)
+- PATCH : 하나의 자료내용중 한 부분만 수정하세요 (DB에서 자료 한개 중 일부 수정)
+
+### 4.5 XHR 로 비동기 작업해보기
 
 ```js
-const arr = [1, 2, 3, 4];
-for (let i = 0; i < arr.length; i++) {
-  console.log(arr[i]); // 1, 2, 3, 4
+//jQuery
+// 전체 게시글 요청하는 함수
+function getPosts() {
+  console.log("전체자료 주세요");
+  // 1. xhr 객체를 만든다.
+  const xhr = new XMLHttpRequest();
+  // 2. BE 에서 알려준 주소로 접속한다.
+  // xhr.open("방식", "주소")
+  xhr.open("GET", "https://jsonplaceholder.typicode.com/posts");
+  // 3. 만들어 둔 xhr 을 전송한다.
+  xhr.send();
+  console.log("자료를 전송하였습니다.");
+  console.log("다음 작업 진행합니다.");
+  //4. BE에서 회신된 결과가 오면 실행한다.
+  xhr.onload = function () {
+    console.log("요청 처리가 된 경우의 결과 : ", xhr);
+    if (xhr.status === 200) {
+      console.log(xhr.responseText);
+    } else if (xhr.status === 404) {
+    } else if (xhr.status === 505) {
+      console.log("서버가 꺼졌습니다. 잠시 후 다시 시도해주세요.");
+    }
+  };
+}
+// 요청하기
+getPosts();
+```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 전체 게시글 요청하는 함수
+      function getPosts() {
+        console.log("전체자료 주세요.");
+        // 1. xhr 객체를 만든다.
+        const xhr = new XMLHttpRequest();
+
+        // 2. 백엔드에서 알려준 주소로 접속한다.
+        // xhr.open("방식", "주소")
+        xhr.open("GET", "https://jsonplaceholder.typicode.com/posts");
+
+        // 3. 만들어든 xhr 을 전송합니다.
+        xhr.send();
+        console.log("자료를 전송하였습니다.");
+        console.log("다음 작업 진행합니다.");
+
+        // 4. 백엔드에서 회신된 결과가 오면 실행합니다.
+        xhr.onload = function () {
+          console.log("요청 처리가 된 경우의 결과 : ", xhr);
+          if (xhr.status === 200) {
+            console.log(xhr.responseText);
+          } else if (xhr.status === 404) {
+            console.log("없는 페이지로 접속하셨습니다.");
+          } else if (xhr.status === 505) {
+            console.log("서버가 꺼졌습니다. 잠시 후 다시 시도해주세요.");
+          }
+        };
+      }
+      // 요청하기
+      // getPosts();
+
+      function getAlbums() {
+        console.log("앨범전체 자료 요청");
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://jsonplaceholder.typicode.com/albums");
+        xhr.send();
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            console.logt(xhr.responseText);
+          } else if (xhr.status === 404) {
+            console.log("주소 및 쿼리 확인하세요.");
+          } else if (xhr.status === 505) {
+            console.log("서버가 전원이 꺼졌습니다. 다시 시도해주세요.");
+          }
+        };
+      }
+      // getAlbums();
+
+      function getPhotos() {
+        console.log("사진 자료 요청");
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://jsonplaceholder.typicode.com/photos");
+        xhr.send();
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            console.logt(xhr.responseText);
+          } else if (xhr.status === 404) {
+            console.log("주소 및 쿼리 확인하세요.");
+          } else if (xhr.status === 505) {
+            console.log("서버가 전원이 꺼졌습니다. 다시 시도해주세요.");
+          }
+        };
+      }
+      //getPhotos();
+
+      function getTodos() {
+        console.log("할일 자료 요청");
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://jsonplaceholder.typicode.com/todos");
+        xhr.send();
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            console.logt(xhr.responseText);
+          } else if (xhr.status === 404) {
+            console.log("주소 및 쿼리 확인하세요.");
+          } else if (xhr.status === 505) {
+            console.log("서버가 전원이 꺼졌습니다. 다시 시도해주세요.");
+          }
+        };
+      }
+      getTodos();
+    </script>
+  </body>
+</html>
+```
+
+### 4.6 콜백 함수로 개선해보기
+
+- 코드 개선 시도
+- 예) 주소와 메서드를 편리하게 개선
+- `call back hell` 이 발생할 수 있음.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * 지정된 주소로 Http 요청을 보내고 결과를 함수로 처리함.
+       *
+       * @param {string} addr - 요청을 보낼 URL (예: "posts", "albums")
+       * @param {"GET"|"POST"|"PUT"|"DELETE"|"PATCH" } method - HTTP 메소드 종류
+       * @param {(responseText:string) => void} callback - 요청 성공시 실행할 콜백함수
+       */
+      function getData(addr, method, callback) {
+        const url = `https://jsonplaceholder.typicode.com/${addr}`;
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, url);
+        xhr.send();
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            // 콜백함수 자리
+            callback(xhr.responseText);
+          } else if (xhr.status === 404) {
+            console.log(`${addr}의 쿼리가 잘못되었습니다. 확인하세요.`);
+          } else if (xhr.status === 505) {
+            console.log("서버가 오류입니다. 다시 시도해주세요.");
+          }
+        };
+      }
+
+      function postsParse(_data) {
+        console.log("게시글 결과 === ");
+        console.log(_data);
+      }
+      function albumsParse(_data) {
+        console.log("앨범 결과 === ");
+        console.log(_data);
+      }
+      function photosParse(_data) {
+        console.log("사진 결과 === ");
+        console.log(_data);
+      }
+      function todosParse(_data) {
+        console.log("사진 결과 === ");
+        console.log(_data);
+      }
+      getData("posts", "GET", postsParse);
+      getData("albums", "GET", albumsParse);
+      getData("photos", "GET", photosParse);
+      getData("todos", "GET", todosParse);
+    </script>
+  </body>
+</html>
+```
+
+### 4.7
+
+## 5. Promise
+
+- `Call Back HEll` 에 의한 단계별 실행 과정에 대한 (편리한) 해결 방안 제공
+- Server 연동이 끝날 때, `성공 함수` 와 `실패함수` 2개를 매개변수로 받아서 실행
+- 2개의 함수는 서버연동이 완료되면 자동실행 되도록 구성.
+
+### 5.1. Promise 는 2개의 매개변수(즉 콜백함수) 를 받음
+
+- resolve 콜백함수 : 백엔드 정상 결과 처리 함수
+- reject 콜백함수 : 백엔드 오류 결과 처리 함수
+
+### 5.2. Promise 는 3가지의 상태가 있습니다.
+
+- Pending : 결과를 대기중 ...
+- Resolved : 성공됨!
+- Rejected : 실패함!
+
+### 5.3 Promise Chaining 예제
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * 지정된 주소로 Http 요청을 보내고 결과를 함수로 처리함.
+       *
+       * @param {string} addr - 요청을 보낼 URL (예: "posts", "albums")
+       * @param {"GET"|"POST"|"PUT"|"DELETE"|"PATCH" } method - HTTP 메소드 종류
+       * @param {(responseText:string) => void} callback - 요청 성공시 실행할 콜백함수
+       */
+      function getData(addr, method) {
+        // 주소
+        const url = `https://jsonplaceholder.typicode.com/${addr}`;
+        return new Promise(function (resolve, rejected) {
+          // 하고 싶은 XHR
+          const xhr = new XMLHttpRequest();
+          xhr.open(method, url);
+          xhr.send();
+
+          xhr.onload = function () {
+            if (xhr.status === 200) {
+              // 성공(resolve) 함수 자리
+              resolve(xhr.responseText);
+            } else if (xhr.status === 404) {
+              // 실패(rejected) 함수 자리
+              rejected.log(`${addr} 의 쿼리가 잘못되었습니다. 확인하세요.`);
+            } else if (xhr.status === 505) {
+              rejected.log("서버가 오류입니다. 다시 시도해주세요.");
+            } else {
+              rejected(`알 수 없는 오류입니다.${xhr.status}`);
+            }
+          };
+        });
+      }
+
+      function postsParse(_data) {
+        console.log("게시글 결과 ==== ");
+        console.log(_data);
+      }
+      function albumsParse(_data) {
+        console.log("앨범 결과 ==== ");
+        console.log(_data);
+      }
+      function photosParse(_data) {
+        console.log("사진 결과 ==== ");
+        console.log(_data);
+      }
+      function todosParse(_data) {
+        console.log("할일 결과 ==== ");
+        console.log(_data);
+      }
+      getData("posts", "GET")
+        .then(function (res) {
+          //then : 성공 했을 때 라는 뜻
+          postsParse(res);
+          return getData("posts", "GET");
+        })
+        .then(function (res) {
+          albumsParse(res);
+          return getData("posts", "GET");
+        })
+        .then(function (res) {
+          photosParse(res);
+          return getData("photos", "GET");
+        })
+        .then(function (res) {
+          todosParse(res);
+          return getData("todos", "GET");
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+      return getData("albums", "GET");
+      getData("albums", "GET");
+      getData("photos", "GET");
+      getData("todos", "GET");
+    </script>
+  </body>
+</html>
+```
+
+## 6. async / await
+
+- 쉽고, 좋음. 단, 규칙 (문법)을 지켜야함.
+
+## 6.1 반드시 다음 처럼 코딩해야함.
+
+- (1) 반드시 함수여야 함.
+
+```js
+function getAllData() {}
+```
+
+- (2) 반드시 function 앞에 `async` 를 붙여줌.
+
+```js
+async function getAllData() {}
+```
+
+- (3) 반드시 function 안쪽에 try ~ catch를 작성.
+
+```js
+async function getAllData() {
+  try {
+  } catch (error) {}
 }
 ```
 
-```ts
-const arr: number[] = [1, 2, 3, 4];
+- 실행하려는 함수는 반드시 try 블럭 안쪽에 배치.
+- 실행하려는 함수는 반드시 앞에 await 을 붙여줌.
 
-for (let i = 0; i < arr.length; i++) {
-  console.log(arr[i]); // 1, 2, 3, 4
+```js
+async function getAllData() {
+  try {
+    // await 는 결과가 나올 때까지 기다리라는 뜻. (순차적으로 진행된다.)
+    await getData("posts", "GET");
+    await getData("albums", "GET");
+    await getData("photos", "GET");
+    await getData("todos", "GET");
+  } catch (error) {}
 }
 ```
 
-```ts
-// for ...ㅇf문
-const arr: number[] = [1, 2, 3, 4];
+### 6.2 XHR 대신에 fetch 추천
 
-for (const num of arr) {
-  console.log(num); // 1, 2, 3, 4
+```js
+async function getData(addr, method) {
+  // 주소
+  const url = `https://jsonplaceholder.typicode.com/${addr}`;
+  try {
+    const response = await fetch(url, { method });
+    if (response.ok) {
+      return response.json();
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
-```
-
-```ts
-// forEach 문
-const arr: number[] = [1, 2, 3, 4];
-
-arr.forEach((num) => {
-  console.log(num); // 1, 2, 3, 4
-});
-```
-
-```ts
-// 배열 메서드를 사용한 방식
-arr.forEach((num, index) => {
-  console.log(index, num);
-});
-```
-
-- forEach
-
-```js
-const arr = [1, 2, 3, 4];
-arr.forEach(function (요소, 인덱스, 원본배열) {
-  console.log(요소); // 1,2,3,4
-});
-arr.forEach((요소, 인덱스, 원본배열) => {
-  console.log(요소); // 1,2,3,4
-});
-// 아래 구문이 많이 사용되는 형태이다.
-arr.forEach((요소, 인덱스) => {
-  console.log(요소); // 1,2,3,4
-});
-arr.forEach((item, index) => {
-  console.log(index); // 0,1,2,3
-  console.log(item); // 1,2,3,4
-});
-```
-
-```ts
-const arr: number[] = [1, 2, 3, 4];
-arr.forEach(function (요소, 인덱스, 원본배열) {
-  console.log(요소); // 1,2,3,4
-});
-arr.forEach((요소, 인덱스, 원본배열) => {
-  console.log(요소); // 1,2,3,4
-});
-// 아래 구문이 많이 사용되는 형태이다.
-arr.forEach((요소, 인덱스) => {
-  console.log(요소); // 1,2,3,4
-});
-arr.forEach((item, index) => {
-  console.log(index); // 0,1,2,3
-  console.log(item); // 1,2,3,4
-});
-```
-
-- map : 원본 배열에서 새로운 배열을 만든다. (별표 10만개)
-
-```js
-const arr = [1, 3, 5, 2];
-arr.map(function (요소, 인덱스, 원본배열) {
-  return 요소 + 1; // 2, 4, 6, 3
-});
-arr.map((요소, 인덱스, 원본배열) => {
-  return 요소 + 1; // 2, 4, 6, 3
-});
-// 아래처럼 주로 사용합니다.
-const resultArr = arr.map((요소, 인덱스) => {
-  return 요소 + 1; // 2, 4, 6, 3
-});
-```
-
-```ts
-const arr: number[] = [1, 3, 5, 2];
-arr.map(function (요소, 인덱스, 원본배열) {
-  return 요소 + 1; // 2, 4, 6, 3
-});
-arr.map((요소, 인덱스, 원본배열) => {
-  return 요소 + 1; // 2, 4, 6, 3
-});
-// 아래처럼 주로 사용합니다.
-const resultArr = arr.map((요소, 인덱스) => {
-  return 요소 + 1; // 2, 4, 6, 3
-});
-```
-
-```js
-const arr = [10, 20, 11, 24];
-const resultArr = arr.map((item, index) => {
-  return `<div class="box">${item}</div> `;
-});
-```
-
-```ts
-const arr: number[] = [10, 20, 11, 24];
-const resultArr = arr.map((item, index) => {
-  return `<div class="box">${item}</div> `;
-});
-```
-
-- for in 구문 : (가능하면 사용하지마세요. 객체에게 양보하세요)
-
-## 2. 객체의 반복문
-
-- for in 구문 : 가장 추천
-
-```js
-const obj = {
-  age: 10,
-  nickName: "hong",
-  isMember: true,
-};
-
-for (속성명 in 원본객체) {
-  console.log(속성명);
-  console.log(원본객체[속성명]);
-}
-
-for (key in obj) {
-  console.log(key); // age, nickName, isMember
-  console.log(obj[key]); // 10, hong, true
-}
-```
-
-```ts
-type User = { age: number; nickName: string; isMember: boolean };
-const obj: User = {
-  age: 10,
-  nickName: "hong",
-  isMember: true,
-};
-
-for (const key in obj) {
-  const typedKey = key as keyof User;
-  console.log(typedKey); // age, nickName, isMember
-  console.log(obj[typedKey]); // 10, hong, true
-}
-```
-
-- Object.keys(객체).forEach : 참조만 하자.
-
-```js
-const obj = {
-  age: 10,
-  nickName: "hong",
-  isMember: true,
-};
-Object.keys(obj); // [age, nickName, isMember]
-Object.keys(obj).forEach(function (요소, 인덱스, 원본) {});
-Object.keys(obj).forEach((요소, 인덱스, 원본) => {
-  console.log(요소); // age, nickName, isMember
-});
-```
-
-```ts
-type User = { age: number; nickName: string; isMember: boolean };
-
-const obj: User = {
-  age: 10,
-  nickName: "hong",
-  isMember: true,
-};
-Object.keys(obj).forEach((key) => {
-  const typedKey = key as keyof User;
-  console.log(typedKey); // 'age' | 'nickName' | 'isMember'
-  console.log(obj[typedKey]); // 10, "hong", true
-});
-```
-
-- Object.values(객체).forEach : 참조
-
-```js
-const obj = {
-  age: 10,
-  nickName: "hong",
-  isMember: true,
-};
-Object.values(obj); // [10, "hong", true]
-Object.values(obj).forEach(function (요소, 인덱스, 원본) {});
-Object.values(obj).forEach((요소, 인덱스, 원본) => {
-  console.log(요소); // 10, "hong", true
-});
-```
-
-- Object.entries(객체).forEach : 참조만
-
-```js
-const obj = {
-  age: 10,
-  nickName: "hong",
-  isMember: true,
-};
-Object.entries(obj); // [10, "hong", true]
-Object.entries(obj).forEach(function (요소, 인덱스, 원본) {});
-Object.entries(obj).forEach((요소, 인덱스, 원본) => {
-  console.log(요소); // [age, 10]
-  console.log(요소); // [nickName, "hong"]
-  console.log(요소); // [isMember, true]
-});
-```
-
-## 3. 정리 (우리가 필수로 알아야 함)
-
-- for
-- 배열.map
-- 배열.forEach
-- for (키 in 객체)
-
-# 값을 추출해서 보관하기 (별 10만개)
-
-## 1. `배열`의 값을 뽑아서 보관하기
-
-```js
-const arr = ["사과", "딸기", "바나나"];
-// 아래처럼 정말 단순하게 작업함.
-const apple = arr[0];
-const strawberry = arr[1];
-const banana = arr[2];
-
-// 아래처럼 ... Spread 문법을 권장함.
-const [a, b, c] = [...arr];
-console.log(a); // 사과
-console.log(b); // 딸기
-console.log(c); // 바나나
-```
-
-- `Spread 문법`으로 2개의 배열을 하나로 합치기
-
-```js
-const arr = ["사과", "딸기", "바나나"];
-const resultArr1 = [5, arr[0], arr[1], arr[2], 3, 7, 1];
-const resultArr2 = [5, ...arr, 3, 7, 1];
-// Rest 파라메터
-function 함수(...rest) {
-  console.log(rest); // [1,2,3]
-}
-함수(1, 2, 3);
-```
-
-## 2. `객체`의 값을 뽑아서 보관하기 (몹 시 중 요)
-
-```js
-const obj = { age: 10, job: "개발자", city: "대구" };
-const a = obj.age;
-const b = obj.age;
-const c = obj["city"];
-// 객체 구조 분해 할당 (destructuring)
-const { age: a, age: b, city: c } = obj;
 ```
