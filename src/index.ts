@@ -1,17 +1,32 @@
-type Calculator = {
+interface Animal {
   name: string;
-  add: (a: number, b: number) => number;
-  minus: (a: number, b: number) => number;
-  multi: (a: number, b: number) => number;
-  divide: (a: number, b: number) => number;
-};
-const calc: Calculator = {
-  name: "계산기",
-  add: (a, b) => a + b,
-  minus: (a, b) => a - b,
-  multi: (a, b) => a * b,
-  divide: (a, b) => a / b,
+}
+const ani: Animal = {
+  name: "홍길동",
 };
 
-calc.name; // 계산기
-calc.add(5,6); // 11
+// extends = 확장하다
+interface Dog extends Animal {
+  bark(): void;
+}
+const dog: Dog = {
+  name: "댕댕이",
+  bark: () => console.log("멍멍"),
+};
+
+interface Cat extends Animal {
+  cry(): void;
+}
+const cat: Cat = {
+  name: "야옹이",
+  cry: () => console.log("야옹"),
+};
+
+interface Person extends Animal {
+  say(): void;
+}
+
+const iu: Person = {
+  name: "아이유",
+  say: () => console.log("안녕"),
+};
