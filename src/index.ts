@@ -1,14 +1,7 @@
-// 권장함
-interface 약속 {
-  name: string;
+function mergeArr<T, U>(arr1: T[], arr2: U[]): (T | U)[] {
+  return [...arr1, ...arr2];
 }
-class Person implements 약속 {
-  name: string;
-}
-// 아래도 가능하지만, 권장하진 않음
-type 약속타입 = {
-  name: string;
-};
-class Dog implements 약속타입 {
-  name: string;
-}
+
+let result_1 = mergeArr([1, 2, 3], [6, 7, 3]);
+let result_2 = mergeArr([1, 2, 3], ["a", "b", "c"]);
+let result_3 = mergeArr([1, 2, 3], [6, 7, 3]);
