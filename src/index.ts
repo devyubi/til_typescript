@@ -1,7 +1,14 @@
-function mergeArr<T, U>(arr1: T[], arr2: U[]): (T | U)[] {
-  return [...arr1, ...arr2];
+// 저장하기 관련 클래스
+class TodoStorage<T> {
+  private items: T[] = [];
+  add(item: T): void {
+    this.items.push(item);
+  }
+  read(): T[] {
+    return this.items;
+  }
 }
 
-let result_1 = mergeArr([1, 2, 3], [6, 7, 3]);
-let result_2 = mergeArr([1, 2, 3], ["a", "b", "c"]);
-let result_3 = mergeArr([1, 2, 3], [6, 7, 3]);
+const result = new TodoStorage();
+result.add("아이유");
+result.read();
