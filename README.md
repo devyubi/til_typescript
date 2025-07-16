@@ -1,99 +1,19 @@
-# TS 심화 - Enum
+# TS 심화 - Casting (캐스팅)
 
-- 여러개의 상수를 정의해서 사용할 때 유용
-- API 요청시 활용을 자주 함
-- 오타를 줄여줌 (협업시 유용)
-  변하는 과정 1.
-
-```ts
-/**
- * API 요청을 한다
- * 4가지의 상태가 흔히 활용됨
- *
- * DONE - 요청을 실행 상태
- * LOADING - 요청이 진행 중인 상태
- * ERROR - 요청이 실패 상태
- * INIT - 초기 상태
- */
-
-function runNetwork() {
-  let status = "INIT";
-  try {
-    status = "LOADING";
-    // 복잡한 처리 를 진행할 것임
-    // 복잡한 처리 를 진행할 것임
-
-    status = "DONE";
-  } catch (error) {
-    status = "ERROR";
-  } finally {
-    return status;
-  }
-}
-console.log(runNetwork() === "DONE");
-```
-
-변하는 과정2.
+- VSCode 는 타입을 추론함.
+- 특정한 타입으로 추론을 하라고 지시 할 수 있음.
+- 강제로 타입을 변환 시킴
+- `as` 문법
+- any 안쓸 수는 없으니, 원하는 타입이 있으면 as 를 활용
 
 ```ts
-const doneStatus = "DONE";
-const loadingStatus = "LOADING";
-const errorStatus = "ERROR";
-const initStatus = "INIT";
+let numVar: any = 5;
 
-function runNetwork() {
-  let status = initStatus;
-  try {
-    status = loadingStatus;
-    // 복잡한 처리 를 진행할 것임
-    // 복잡한 처리 를 진행할 것임
+numVar = "Hello";
+numVar = true;
+numVar = 100;
 
-    status = doneStatus;
-  } catch (error) {
-    status = errorStatus;
-  } finally {
-    return status;
-  }
-}
-console.log(runNetwork() === "DONE");
-```
-
-변하는 과정 3
-
-```ts
-/**
- * API 요청을 한다
- * 4가지의 상태가 흔히 활용됨
- *
- * DONE - 요청을 실행 상태
- * LOADING - 요청이 진행 중인 상태
- * ERROR - 요청이 실패 상태
- * INIT - 초기 상태
- */
-export enum Status {
-  DONE = "DONE",
-  LOADING = "LOADING",
-  ERROR = "ERROR",
-  INIT = "INIT",
-}
-const doneStatus = "DONE";
-const loadingStatus = "LOADING";
-const errorStatus = "ERROR";
-const initStatus = "INIT";
-
-function runNetwork() {
-  let status = Status.INIT;
-  try {
-    status = Status.LOADING;
-    // 복잡한 처리 를 진행할 것임
-    // 복잡한 처리 를 진행할 것임
-
-    status = Status.DONE;
-  } catch (error) {
-    status = Status.ERROR;
-  } finally {
-    return status;
-  }
-}
-console.log(runNetwork() === "DONE");
+// 강제로 데이터 타입을 지정하기 위한 처리
+let temp = numVar as string;
+temp.toUpperCase(); // 대문자로 바꾸어라
 ```
