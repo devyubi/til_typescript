@@ -1,19 +1,101 @@
-# TS 심화 - Casting (캐스팅)
+# TS 심화 - Union
 
-- VSCode 는 타입을 추론함.
-- 특정한 타입으로 추론을 하라고 지시 할 수 있음.
-- 강제로 타입을 변환 시킴
-- `as` 문법
-- any 안쓸 수는 없으니, 원하는 타입이 있으면 as 를 활용
+- 타입을 하나로 병합 할 수 있는 방법
 
 ```ts
-let numVar: any = 5;
+type StringNumberType = string | number;
+let strVar: StringNumberType = "hi";
+strVar = 300;
 
-numVar = "Hello";
-numVar = true;
-numVar = 100;
+type NetworkStatus = "DONE" | "LOADING" | "ERROR" | "INIT";
+let state: NetworkStatus = "DONE";
+state = "LOADING";
+state = "ERROR";
+state = "INIT";
 
-// 강제로 데이터 타입을 지정하기 위한 처리
-let temp = numVar as string;
-temp.toUpperCase(); // 대문자로 바꾸어라
+type StringNumberArray = string[] | number[];
+let arr: StringNumberArray = [1, 2, 3];
+arr = ["hello", "hi"];
+```
+
+- interface 도 유니온 가능
+
+```ts
+interface Animal {
+  name: string;
+  age: number;
+}
+interface Human {
+  name: string;
+  age: number;
+  address: string;
+}
+
+type AnimalHuman = Animal | Human;
+/**
+ * 하나의 타입으로 합쳐진다
+ * {
+ * name: string;
+ * age:number;
+ * address:string;
+ * }
+ */
+const temp: AnimalHuman = {
+  address: "대구",
+  age: 20,
+  name: "아이유",
+};
+```
+
+- type 여러개도 유니온
+
+```ts
+type Animal = {
+  name: string;
+  age: number;
+};
+type Human = {
+  name: string;
+  age: number;
+  address: string;
+};
+
+type AnimalHuman = Animal | Human;
+/**
+ * 여러개의 타입을 하나로 합침 (하나의 타입으로 합쳐짐)
+ * {
+ * name: string;
+ * age:number;
+ * address:string;
+ * }
+ */
+const temp: AnimalHuman = {
+  address: "대구",
+  age: 20,
+  name: "아이유",
+};
+```
+
+# ts 심화 - Intersection
+
+- 여러개의 타입을 모두 만족하는 타입을 만듦
+
+```ts
+interface Human {
+  name: string;
+  age: number;
+}
+interface Contacts {
+  phone: string;
+  address: string;
+}
+type HumanContacts = Human & Contacts;
+// 반드시 모든 속성이 존재해야 함
+
+let iu: HumanContacts = {
+  address: "서울",
+  age: 28,
+  name: "아이유",
+  phone: "000-0000-0000",
+};
 ```
