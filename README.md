@@ -1,233 +1,353 @@
-# ts 심화 - Narrowing
+# ts-심화 함수정의하기
 
-- 타입을 점차적으로 구체화
-- 타입 좁히기
-- typeof 검사 덕분에 조건문 안에서 정확한 타입이 결정돼 → 이걸 narrowing이라고 부름
-- 여러 가지 타입 중에서, 코드의 흐름이나 조건문 등을 통해 실제 사용 가능한 하나의 타입으로 좁혀지는 것
-
-```ts
-// number 이거나 string 일 수 있음.
-let numString: number | string = "아이유";
-// ts 는 이때, 자동으로 number를 제거하고 string으로 판단함
-// 이것을 narrowing 이라고 함. 즉, 타입 좁히기라고 함
-
-// let numString : string
-numString;
-// 위의 변수는 string 으로 판정이 되므로 아래 문장이 오류가 발생함.
-numString.toFixed(2); // number 타입이 아니라서 오류 발생함.
-```
-
-## 타입 좁히기 8개 방안
-
-### 1. Assingment Narrowing
-
-- 유니온 타입에서 초기값을 세팅해서 할당함
+- ts 에서는 아래처럼 함수를 생성하지 않기
+- 함수에서는 매개변수 name 에 대해 타입추론을 해주지 않음.
+- 일반 변수는 타입 추론을 지원해줌.
 
 ```ts
-// 초기값으로 string 을 할당함
-let numString: number | string = "문유비";
-numString; // string
-```
-
-### 2. typeof Narrowing
-
-- `typeof 연산자`를 사용해서 타입을 좁혀줌
-
-```ts
-// 초기값으로 string 을 할당함
-let numString: number | string = "문유비";
-numString; // string
-
-numString = Math.random() > 0.5 ? 500 : "문유비";
-if (typeof numString === "string") {
-  // string
-  numString; // let numString: string
-} else {
-  // number
-  numString; // let numString: number
+// 매개변수 name 에 대해 타입추론을 개발자에게 양도함.
+function showName(name) {
+  console.log(name);
 }
 ```
 
-### 3. Truthiness Narrowing
-
-- null, 0, undefined, "", Nan, false = (falsy한 값=거짓같은 값)
+- ts 에서는 최소 매개변수에 대해서는 타입 직접 지정
 
 ```ts
-let nullOrString: null | string[];
-nullOrString = Math.random() > 0.5 ? null : ["아이유", "블랙핑크"];
-// if 로 참인 것을 거르고 처리
-if (nullOrString) {
-  // 글자배열
-  nullOrString; // let nullOrString: string[]
-} else {
-  // null 이다.
-  nullOrString; // let nullOrString: null
+function showName(name: string) {
+  console.log(name);
 }
 ```
 
-### 4. Equality Narrowing
+- 반환값에 대해서는 VSCode가 타입추론을 해줌 (명시해주지 않고 보자)
 
-- 비교 연산자를 이용함
+## 함수의 옵셔널(?) 매개변수
+
+- 옵셔널을 사용하면 매개변수가 필수 값이 아님
+- 선택적으로 활용 가능
+- 옵셔널을 활용하면 undefined 를 허용하겠다.
 
 ```ts
-let numOrString: number | string = Math.random() > 0.5 ? 100 : "아이유";
-let stringOrBoolean: string | boolean = Math.random() > 0.5 ? "블랙핑크" : true;
+function showName(name: string, age?: number) {
+  console.log(name);
+  if (age) {
+    console.log(age);
+  }
+}
 
-// js 에서는 불가능 하지만, ts 에서는 가능하다.
-if (numOrString === stringOrBoolean) {
-  // numOrString:string === stringOrBoolean:string
-  numOrString; // let numOrString: string
-  stringOrBoolean; // let stringOrBoolean: string
-} else {
-  numOrString; // let numOrString: string | number
-  stringOrBoolean; // let stringOrBoolean: string | true
+const result = showName("문유비");
+const result2 = showName("문소정", 20);
+```
+
+## 함수의 매개변수 기본값 (default Value)
+
+- 사용자가 만약에 값을 넣지 않는다면 처리
+
+```ts
+function showName(name: string, country: string = "한국") {
+  console.log(name);
+  console.log(country);
+}
+
+const result = showName("문유비", "미국");
+const result2 = showName("문소정");
+const result3 = showName("문깜찍", "태국");
+```
+
+## 함수의 매개변수 나머지 처리 (…)
+
+- 매개변수 갯수를 모를 때 활용 (라이브러리에 자주 보임)
+
+```ts
+// ... 을 사용하면 배열을 만들어줌.
+function showMember(...args: string[]) {
+  console.log(args);
+}
+showMember("a", "b", "c"); // ["a", "b", "c"]
+showMember("a", "b", "c", "d"); // ["a", "b", "c", "d"]
+showMember("a"); // ["a"]
+```
+
+```ts
+// ...args 는 끝자리만 가능함. end:string 은 불가하다는 뜻.
+function showMember(first: string, ...args: string[]) {
+  console.log(first);
+  console.log(args);
+}
+showMember("a", "b", "c"); // "a", ["b", "c"]
+showMember("a", "b", "c", "d"); // a", ["b", "c", "d"]
+showMember("a"); // "a", []
+```
+
+## 함수의 리턴타입에 대한 처리
+
+```ts
+function add(a: number, b: number) {
+  return a + b;
 }
 ```
 
-### 5. in Opertor Narrowing
-
-- in 연산자를 이용하여 타입 좁히기
-- 객체의 속성을 추출하는 용도
-- 보통 많은 개발자가 `type` 이라는 속성을 많이 활용함
+- 아래의 경우 고민을 해야함
 
 ```ts
-interface Human {
+function randomResult() {
+  return Math.random() > 0.5 ? "안녕" : 100;
+}
+let a: "안녕" | 100 = randomResult();
+let b: "안녕" | 100 = randomResult();
+```
+
+## 함수의 리턴 타입이 void
+
+- void 는 기본형 데이터가 아님
+- 아무것도 리턴하는 값이 없음 (연산만하고 끝남)
+
+```ts
+function randomResult() {}
+let a = randomResult();
+let b = randomResult();
+```
+
+## 함수의 리턴 타입이 never
+
+- 절대로 `리턴이 되면 안된다`를 표현
+- 무한 루프, ERROR 가 발생한다면.
+- 강제로 에러 발생 시켜봄
+
+```ts
+// 강제로 에러를 발생 시킨 코드 makeError
+// 여기서 뒤에 :never 는 절대로 발생 되면 안된다 는 뜻
+function makeError(): never {
+  throw new Error("에러 처리");
+}
+
+makeError();
+```
+
+- 무한 루프 예제
+
+```ts
+function loop() {
+  while (true) {}
+}
+loop();
+```
+
+# ts 심화 - 함수 시그니처를 타입으로 정의하기
+
+- 아래 코드는 가독성이 복잡함
+
+```ts
+const sing: (arr: string[]) => string[] = (arr: string[]) => {
+  return arr.map((item) => `${item} 입니다.`);
+};
+sing(["아이유", "지민"]);
+```
+
+- 위의 코드를 type 으로 추출함
+
+```ts
+type MapParam = (arr: string[]) => string[];
+
+const sing: MapParam = (arr: string[]) => {
+  return arr.map((item) => `${item} 입니다.`);
+};
+
+sing(["아이유", "지민"]);
+```
+
+- 매개 변수도 없고, 리턴도 없음
+
+```ts
+type SingType = () => void;
+
+const sing: SingType = () => {};
+
+sing();
+```
+
+- 매개 변수가 있고, 리턴은 없는 경우
+
+```ts
+type SingType = (user: string) => void;
+
+const sing: SingType = (user: string) => {};
+
+sing("아이유");
+```
+
+- 매개 변수도 있고, 리턴도 있는 경우
+
+```ts
+type SingType = (user: string) => string;
+
+const sing: SingType = (user: string) => {
+  return user;
+};
+
+sing("아이유");
+```
+
+- 위의 응용 예제
+
+```ts
+type SingType = (user: string) => string;
+
+const sing: SingType = (user: string) => {
+  return user;
+};
+const say: SingType = (name: string) => {
+  return name + "안녕";
+};
+sing("아이유");
+```
+
+- interface 를 이용해서 정의하기
+
+```ts
+type SingType = (user: string) => string;
+
+const sing: SingType = (user: string) => {
+  return user;
+};
+
+// 위는 type , 아래는 interface
+
+interface SingI {
+  // 키명 : 키값
+  (user: string): string;
+}
+const say: SingType = (name: string) => {
+  return name + "안녕";
+};
+sing("아이유");
+```
+
+# ts 심화 - 함수 오버로딩
+
+- 동일한 함수명
+- 매개 변수 갯수 또는 데이터 종류가 다름
+
+```ts
+// 중복된 함수는 불가능하지만, 오버로딩 시 가능
+// 매개 변수 한개
+// 매개변수 세개
+// 함수명은 동일하게
+function showMember(a: string, b?: string, c?: string) {}
+
+showMember("문유비");
+showMember("문유비", "문소정", "문깜찍");
+showMember("문유비", "문소정"); // 2 개가 가능하므로, 원하는 결과는 아님. (오류의 가능성 다분함)
+```
+
+- 함수 오버로딩 구현
+
+```ts
+// 매개변수 한개 (규칙 부분)
+function showMember(a: string): void;
+// 매개변수 세개
+function showMember(a: string, b: string, c: string): void;
+
+// 구현 부분
+function showMember(a: string, b?: string, c?: string): void {
+  console.log(a);
+  if (b && c) {
+    console.log(b, c);
+  }
+}
+
+showMember("문유비");
+showMember("문유비", "문소정", "문깜찍");
+showMember("문유비", "문소정"); // 2개가 가능 하므로 ERROR 가 뜸. (이걸 함수 오버로딩이라고 함)
+```
+
+## ts 심화 - Type Predicate
+
+- 어떤 변수, 어떤 반환값 특정 타입인지 확인하는 용도의 함수
+
+```ts
+// 어떤 재료가 들어왔을 때, number 인지 확인하는 함수 (Type Predicate)
+function isNumber(a: any): a is number {
+  return typeof a === "number";
+}
+const age = isNumber(30);
+
+// 어떤 재료가 들어왔을 때 boolean 인지 확인하는 함수
+function isBoolean(a: any): a is boolean {
+  return typeof a === "boolean";
+}
+const hi = isBoolean("안녕");
+```
+
+```ts
+// 어떤 재료가 들어왔을 때 number 인지 확인 하는 함수
+function isNumber(a: any): a is number {
+  return typeof a === "number";
+}
+const age = isNumber(30);
+
+let test: any = 100;
+if (isNumber(test)) {
+  test; // let test: number
+}
+
+// 어떤 재료가 들어왔을 때 boolean 인지 확인 하는 함수
+function isBoolean(a: any): a is boolean {
+  return typeof a === "boolean";
+}
+const hi = isBoolean("안녕");
+
+let check: any = false;
+if (isBoolean(check)) {
+  // boolean 이라면 정리하겠다.
+  check; // let check: boolean
+}
+
+let count: any = "5번";
+Math.round(count); // Math.round : 반올림 이라는 뜻
+
+if (isNumber(count)) {
+  // 정말 숫자다
+  count;
+} else {
+  // 숫자가 아니다
+  console.log("숫자를 입력하세요.");
+}
+```
+
+- interface 활용
+
+```ts
+interface Dog {
   name: string;
   age: number;
 }
-interface Dog {
-  name: string;
-  type: string;
-}
-let h: Human = { name: "아이유", age: 28 };
-let d: Dog = { name: "뽀삐", type: "토이푸들" };
-
-let result: Human | Dog = Math.random() > 0.5 ? h : d;
-// in 연산자를 이용해서 타입을 구체화, 즉 타입 좁히기를 실행하자
-// console.log("age" in result);
-// console.log("name" in result);
-// console.log("type" in result);
-if ("type" in result) {
-  result; // let result: Dog
-} else {
-  result; // let result: Human
-}
-```
-
-### 6. instanceof Narrowing
-
-- new 클래스명() 으로 만들어진 변수를 인스턴스 변수라고 함
-
-```ts
-let dateOrString: Date | string = Math.random() > 0.5 ? new Date() : "아이유";
-
-// new 로 생성된 것만 가능
-if (dateOrString instanceof Date) {
-  dateOrString; // let dateOrString: Date
-} else {
-  dateOrString; // let dateOrString: String
-}
-```
-
-### 7. Discriminated Narrowing (공통 속성)
-
-- 차별된 유니온 Narrowing
-- 유니온 타입에서 `특정 속성을 사용`해서 타입 좁히기
-- 불완전하게 타입을 좁힌 경우
-
-```ts
-// 좋지 않은 코드이지만, 해결은 가능함
-interface Animal {
-  type: "dog" | "human";
-  // 사람일 때만 사용할 수 있다.
-  height?: number; // 키 : number
-  // 강아지 일 때만 사용할 수 있음
-  breed?: string; // 종류: string
-}
-let result: Animal =
-  Math.random() > 0.5
-    ? { type: "human", height: 180 }
-    : { type: "dog", breed: "뽀삐" };
-
-// 상당히 좋지 않게 코드 분기를 하였다. 개선이 필요함
-if (result.type === "human") {
-  result;
-  result.height;
-  result.breed;
-} else {
-  result;
-  result.breed;
-}
-```
-
-- 개선한 코드
-
-```ts
-  type: "human";
-  height: number;
-}
-interface Dog {
-  type: "dog";
-  breed: string;
-}
-
-type Animal = Human | Dog;
-
-let result: Animal =
-  Math.random() > 0.5
-    ? { type: "human", height: 180 }
-    : { type: "dog", breed: "뽀삐" };
-
-// 상당히 좋지 않게 코드 분기를 하였습니다.
-// 개선이 필요합니다.
-if (result.type === "human") {
-  result; // let result: Human
-  result.height;
-} else {
-  result; // let result: Dog
-  result.breed;
-}
-```
-
-### 8. Existential Narrowing
-
-- 존재하는 값을 사용해서 타입 구체화함. (타입좁히기)
-- Switch Case 문을 사용함
-
-```ts
-interface Human {
-  type: "human";
-  height: number;
-}
-interface Dog {
-  type: "dog";
-  breed: string;
-}
-
 interface Cat {
-  type: "cat";
-  koo: string;
+  name: string;
+  breed: string;
+}
+type DogCat = Dog | Cat;
+function isDog(a: DogCat) {
+  // (a as Dog) : 얘는 무조건 강아지다. !== undefined : 무조건 값을 추출해내라
+  return (a as Dog).age !== undefined;
 }
 
-type Animal = Human | Dog | Cat;
+const pp: DogCat = { name: "댕댕이", age: 10 };
+const cc: DogCat = { name: "댕댕이", breed: "샴" };
 
-let result: Animal =
-  Math.random() > 0.5
-    ? { type: "human", height: 180 }
-    : Math.random() > 0.5
-    ? { type: "dog", breed: "뽀삐" }
-    : { type: "cat", koo: "꾹꾹이" };
-
-// 개발자가 만든 type 속성을 이용해서 처리
-switch (result.type) {
-  case "human":
-    result; // let result: Human
-    break;
-  case "dog":
-    result; //let result: Dog
-    break;
-  case "cat":
-    result; //let result: Dog
-    break;
+if (isDog(pp)) {
+  // Dog 라는 코드 진행
+  pp; // const pp: Dog
+} else {
+  // Cat 이라는 코드 진행
 }
 ```
+
+## ts 심화 - 참고
+
+- 타입 오류 발생 시 조치 사항
+- 1. `any` 로 변경 해 보기
+- 2. `Narrowing (타입좁히기)` (if 문 사용)
+- 3. `as 로 강제 타입` 설정
+- 4. `is 함수` 써보기
+- = 1 → 2 → 3 → 4 번대로 순차적으로 실행
