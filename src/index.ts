@@ -1,30 +1,40 @@
-// 클래스는 속성과 메서드 존재함.
-class Game {
+interface Pet {
+  legs: number;
+  bark(): void;
+}
+interface Animal {
   name: string;
-  country: string;
-  download: number;
-  // new 붙여서 실행하면 결과로. constructor : 인스턴스 생성자
-  constructor(name: string, country: string, download: number) {
+  age: number;
+}
+class Cat implements Pet, Animal {
+  name: string;
+  age: number;
+  legs: number;
+  constructor(name: string, age: number, legs: number) {
+    this.age = age;
     this.name = name;
-    this.country = country;
-    this.download = download;
+    this.legs = legs;
   }
-
-  // 메서드
-  introduce() {
-    return `${this.name} 게임은 ${this.country} 에서 개발, ${this.download} 만큼 인기가 있습니다.`;
-  }
+  bark(): void {}
 }
 
-/**
- * {
- *  name:string
- *  country:string
- *  download:number
- *  introduce(): string
- * }
- */
-const game = new Game("포트리스", "한국", 100);
-console.log(game.name);
-console.log(game.country);
-console.log(game.download);
+type AnimalPet = Animal & Pet;
+const d: AnimalPet = {
+  age: 20,
+  legs: 4,
+  name: "댕댕이",
+  bark() {
+    console.log("안녕");
+  },
+};
+class Cat2 implements AnimalPet {
+  name: string;
+  age: number;
+  legs: number;
+  constructor(name: string, age: number, legs: number) {
+    this.age = age;
+    this.name = name;
+    this.legs = legs;
+  }
+  bark(): void {}
+}
