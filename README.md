@@ -640,6 +640,7 @@ class Cat extends Animal {
   name: number;
 }
 ```
+
 ```ts
 class Animal {
   name: string;
@@ -650,6 +651,7 @@ class Cat extends Animal {
   name: number;
 }
 ```
+
 - 굳이 진행하겠다면?
 
 ```ts
@@ -687,8 +689,26 @@ class Cat extends Animal {
   }
 }
 
-const c= new Cat();
+const c = new Cat();
 c.name; // 접근가능
 c.age; // 접근 불가
-c.breeze // 접근 불가 (protected) 내부 속성에서만 접근 가능
+c.breeze; // 접근 불가 (protected) 내부 속성에서만 접근 가능
+```
+
+- 회사에서 많이 쓰는 예제
+
+```ts
+class User {
+  public name: string;
+  private password: string;
+
+  constructor(name: string, password: string) {
+    this.name = name;
+    this.password = password;
+  }
+
+  public checkPassword(pw: string): boolean {
+    return this.password === pw;
+  }
+}
 ```
