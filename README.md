@@ -412,3 +412,283 @@ class Cat2 implements AnimalPet {
   bark(): void {}
 }
 ```
+
+## Inheritance (상속)
+
+- 확장
+
+```ts
+class Parent {
+  // 필수 속성
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
+  // 메서드
+  dance() {}
+}
+/**
+ * {
+ * name: "엄마",
+ * dance: () => {}
+ * }
+ */
+const p = new Parent("엄마");
+p.name;
+p.dance;
+```
+
+```ts
+class Parent {
+  // 필수 속성
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
+
+  // 메서드
+  dance() {
+    console.log(`${this.name}께서 춤을 추십니다.`);
+  }
+}
+/**
+ * {
+ *  name: "엄마",
+ *  dance: () => {}
+ * }
+ */
+const p = new Parent("엄마");
+p.name;
+p.dance();
+
+class Child extends Parent {
+  // 필수 속성
+  age: number;
+  constructor(age: number, name: string) {
+    super(name); // === new Parent("엄마") 와 동일한 코드임. super 부터 태워주고 this를 씀.
+    this.age = age;
+  }
+  // 메서드
+  sing() {
+    console.log(`${this.age} 살입니다.`);
+  }
+}
+const c = new Child(10, "아빠");
+// 상속받은 속성과 메서드를 활용할 수 있다
+c.name;
+c.dance();
+// 직접 정의한 속성과 메서드를 활용할 수 있다
+c.age;
+c.sing();
+```
+
+- 추가 내용
+
+```ts
+/**
+ * 잘 생각해 봅시다.
+ */
+
+const iuMom: Parent = new Parent("이아무개");
+
+// Childe 는 Parent 를 확장(extends)
+const iu: Child = new Child(28, "김아무개");
+
+// 상속받은 자식은 값으로서 부모에게 할당할 수 있다.
+const mom: Parent = iu;
+
+// 상속받은 자식에게 부모는 값으로 할당할 수 없다.
+const son: Child = iuMom; // Error
+```
+
+- case 1
+
+```ts
+class Animal {
+  name: string;
+}
+class Cat extends Animal {
+  age: number;
+}
+
+const 야옹이: Cat = new Cat();
+const 동물: Animal = new Animal();
+
+// 아래는 클래스의 속성 및 메서드가 한개도 없으므로 가능함
+const 모든동물: Animal = 야옹이;
+const 냐옹이: Cat = 동물;
+```
+
+- case 2
+
+```ts
+class Animal {
+  name: string;
+}
+class Cat extends Animal {}
+
+const 야옹이: Cat = new Cat();
+const 동물: Animal = new Animal();
+
+// 부모에게만 필수 속성이 있으므로 가능함
+const 모든동물: Animal = 야옹이;
+const 냐옹이: Cat = 동물;
+```
+
+- case 3
+
+```ts
+class Animal {}
+class Cat extends Animal {
+  age: number;
+}
+
+const 야옹이: Cat = new Cat();
+const 동물: Animal = new Animal();
+
+// 부모는 속성이 없고 자식에게만 필수 속성이 있음
+// 상황이 달라짐
+const 모든동물: Animal = 야옹이;
+// cat 은 필수 속성인 age 가 필요하지만 Animal 에는 없음
+const 냐옹이: Cat = 동물; // age 가 없어서 오류가 발생함.
+```
+
+- case 4
+
+```ts
+class Animal {
+  name: string;
+}
+class Cat extends Animal {
+  age: number;
+}
+
+const 야옹이: Cat = new Cat();
+const 동물: Animal = new Animal();
+
+// 부모는 속성이 없고 자식에게만 필수 속성이 있음
+// 상황이 달라짐
+const 모든동물: Animal = 야옹이;
+// cat 은 필수 속성인 age 가 필요하지만 Animal 에는 없음
+const 냐옹이: Cat = 동물; // age 가 없어서 오류가 발생함.
+```
+
+- 활용처
+
+```ts
+class Animal {
+  name: string;
+}
+class Cat extends Animal {
+  age: number;
+}
+class Dog extends Animal {
+  breez: string;
+}
+
+const 야옹이: Cat = new Cat();
+const 댕댕이: Dog = new Dog();
+const 동물: Animal = new Animal();
+
+// 부모는 속성이 없고 자식에게만 필수 속성이 있음
+// 상황이 달라짐
+let 모든동물: Animal = 야옹이;
+모든동물 = 댕댕이;
+
+// 일반적인 인스턴스 처리 함수
+function showInfo(대상: Animal) {}
+showInfo(야옹이);
+showInfo(댕댕이);
+
+// cat 은 필수 속성인 age 가 필요하지만 Animal 에는 없음
+const 냐옹이: Cat = 동물; // age 가 없어서 오류가 발생함.
+// dog 는 필수 속성인 breez 가 필요하지만 Animal 에는 없음
+const 멍멍이: Cat = 동물; // breez 가 없어서 오류가 발생함.
+```
+
+## 상속에서의 재정의 (Override:오버라이드)
+
+### 1. 메서드 오버라이드
+
+- 다양한 기능을 자식이 마음대로 정의함. 단, 실행할 메서드는 같음
+- case 1
+
+```ts
+class Animal {
+  // 메서드
+  dance() {}
+}
+class Cat extends Animal {
+  dance(): void {
+    console.log("나는 춤을 적극적으로 출거야");
+  }
+}
+```
+
+### 2. 속성 오버라이드
+
+- 실제로는 부모의 속성을 재정의 할 수 없음
+
+```ts
+class Animal {
+  name: string;
+}
+// 부모와 속성이 같기 때문에 될 수 없음
+class Cat extends Animal {
+  name: number;
+}
+```
+```ts
+class Animal {
+  name: string;
+}
+// 안됩니다.
+class Cat extends Animal {
+  // 오류
+  name: number;
+}
+```
+- 굳이 진행하겠다면?
+
+```ts
+interface Animal {
+  name: string | number;
+}
+class Cat implements Animal {
+  name: number;
+}
+class Dog implements Animal {
+  name: string;
+}
+```
+
+## 접근제어자
+
+```ts
+class Animal {
+  name: string; // (안적으면 public) 모든 접근 가능
+  private age: number; // 모든 접근 불가
+  protected breez: string; // 상속시 접근 가능
+  // 메서드
+  test() {
+    this.name;
+    this.age;
+    this.breez;
+  }
+}
+
+class Cat extends Animal {
+  show() {
+    this.name; // 접근가능
+    this.age; // 프라이빗이라 접근 불가능 (ERROR)
+    this.breez; // 접근가능
+  }
+}
+
+const c= new Cat();
+c.name; // 접근가능
+c.age; // 접근 불가
+c.breeze // 접근 불가 (protected) 내부 속성에서만 접근 가능
+```
