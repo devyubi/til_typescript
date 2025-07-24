@@ -1,714 +1,243 @@
-# ts 심화 - 클래스 정의하기
+# ts 심화 - generic
 
-- `new`를 해서 새로운 인스턴스 변수 타입 정의
+- 나중에 타입을 결정함
+- `타입 변수` 임
+- any 타입에서 효과를 발휘함
+
+## 1. 함수에서 제네릭 사용하기
+
+- 매개변수의 종류가 무엇인지 모르겠다? 하면 any 를 많이 선호함
 
 ```ts
-// 클래스 만들기
-class SampleClass {}
-// 클래스로 인스턴스 변수 만들기 (타입추론이 잘됨)
-const ins = new SampleClass();
-// 클래스는 속성과 메서드가 존재함
-class Game {
-  name: string;
-  country: string;
-  download: number;
+function whatValue(value: any) {
+  return value;
+}
+
+const result = whatValue("안녕");
+```
+
+- any 타입은 `아무거나 다 된다` 라는 의미
+- 리턴되는 값이 타입도 any 가 되어서 정확하지 않음
+- 아래의 경우 문제가 됨
+
+```ts
+function whatValue(value: any) {
+  return value;
+}
+
+const result = whatValue("안녕");
+result.toUpperCase(); // 대문자로 바꾸기 - 문제없음
+
+// 숫자라서 오류발생함
+const resultNum = whatValue(123);
+result.toUpperCase(); // Error: 대문자로 바꾸기 - 문제발생
+```
+
+- 위의 문제를 해결하기 위해 `Generic` 을 이용하여 해결함
+
+```ts
+function whatValue<T>(value: T): T {
+  return value;
+}
+
+// const result: "abc"
+const result = whatValue("abc");
+result.toUpperCase(); // 대문자로 바꾸기, 문제없음
+
+// 숫자라서 오류발생 (코딩 중 발견 가능)
+// const resultNum: 123
+const resultNum = whatValue(123);
+resultNum.toUpperCase(); // Error: 대문자로 바꾸기, 문제발생
+```
+
+- VSCode 가 실시간으로 타입추론 잘 해줌
+
+## 2. 함수에서 Generic을 여러개 사용하기
+
+```ts
+function multiFun<T, K>(a: T, b: K): { a: T; b: K } {
+  return { a, b };
 }
 /**
  * {
- * name:string
- * contry:string
- * download:number
- * }
+    a: string;
+    b: number;
+    }
  */
-const game = new Game();
-// 사용자가 직접 값을 담아줌
-game.name = "포트리스";
-game.country = "한국";
-game.download = 100;
+const result = multiFun("ub", 29);
 ```
 
+## 문제 풀이
+
+- 숫자값을 받아 숫자로 돌려주는 제네릭 함수 만들기
+
 ```ts
-// 클래스는 속성과 메서드 존재함.
-class Game {
-  name: string;
-  country: string;
-  download: number;
-  // new 붙여서 실행하면 결과로. constructor : 인스턴스 생성자
-  constructor(name: string, country: string, download: number) {
-    this.name = name;
-    this.country = country;
-    this.download = download;
-  }
+function doubleNum<T>(a: T): T {
+  return a;
 }
 
-/**
- * {
- *  name:string
- *  country:string
- *  download:number
- * }
- */
-const game = new Game("포트리스", "한국", 100);
+const result = doubleNum(5);
 ```
 
-- 메서드 introduce
+- 숫자 값을 받아서 2배로 돌려주는 제네릭 함수만들기
+
+문제 1.
 
 ```ts
-// 클래스는 속성과 메서드 존재함.
-class Game {
-  name: string;
-  country: string;
-  download: number;
-  // new 붙여서 실행하면 결과로. constructor : 인스턴스 생성자
-  constructor(name: string, country: string, download: number) {
-    this.name = name;
-    this.country = country;
-    this.download = download;
-  }
-
-  // 메서드
-  introduce() {
-    return `${this.name} 게임은 ${this.country} 에서 개발, ${this.download} 만큼 인기가 있습니다.`;
-  }
+function doubleNum(a) {
+  return a * 2;
 }
 
-/**
- * {
- *  name:string
- *  country:string
- *  download:number
- *  introduce(): string
- * }
- */
-const game = new Game("포트리스", "한국", 100);
-console.log(game.name);
-console.log(game.country);
-console.log(game.download);
+const result = doubleNum(5);
 ```
 
-## 클래스 요소 `readonly` 적용하기
-
-- 읽기 전용 속성 생성시
-- 초기화 이후 업데이트 불가
+- 해결
 
 ```ts
-// 클래스는 속성과 메서드 존재함.
-class Game {
-  readonly name: string; // 읽기 전용
-  readonly country: string; // 읽기 전용
-  readonly download: number; // 읽기 전용
-
-  // new 붙여서 실행하면 결과로. constructor : 인스턴스 생성자
-  constructor(name: string, country: string, download: number) {
-    this.name = name;
-    this.country = country;
-    this.download = download;
-  }
-
-  // 메서드
-  introduce() {
-    return `${this.name} 게임은 ${this.country} 에서 개발, ${this.download} 만큼 인기가 있습니다.`;
-  }
+function doubleNum<T extends number>(a: T): T {
+  return (a * 2) as T;
 }
 
-/**
- * {
- *  readonly name:string
- *  readonly country:string
- *  readonly download:number
- *  introduce(): string
- * }
- */
-const game = new Game("포트리스", "한국", 100);
-console.log(game.name); // 값을 읽을 수 있음
-console.log(game.country); // 값을 읽을 수 있음
-console.log(game.download); // 값을 읽을 수 있음
-game.name = "김길동"; // ERROR. 값의 변경 불가
+const result = doubleNum(5);
 ```
 
-## class 속성의 `초기값 세팅`
+## 3. interface에서 제네릭 활용하기
+
+- 유연하게 데이터 타입을 정의하는 방법
+- 데이터 모양을 약속하는 문법
 
 ```ts
-class Person {
-  // 필수 속성이다
-
-  name: string;
-  // 직접 초기값 설정
-
-  age: number = 29;
-  // 속성이 있을 수도 있고 없을 수도 있다
-  pet?: string;
-
-  // 속성에 초기값이 없을리가 없다 (무조건 있음)
-  // 초기값은 무조건 세팅할게!
-  dog!: string;
-
-  // new 하면 실행되는 인스턴스 생성자
-  constructor(name: string) {
-    this.name = name;
-    // 초기값 무조건 있다면
-    this.initialize();
-  }
-  initialize() {
-    this.dog = "댕댕이";
-  }
-}
-// 타입 추론이 성공적이다
-/**
- * {
- * name: "문유비"
- * age: 29
- * pet: undefined (undefined로 속성이 초기값이 세팅되어짐.)
- * dog: "댕댕이"
- * }
- */
-const p = new Person("문유비");
-```
-
-## class 는 type 도 가능하고, 값도 가능함
-
-```ts
-class Dog {
-  name: string;
-  constructor(name: string) {
-    this.name = name;
-  }
-  // 메서드 정의
-  bark() {
-    return `${this.name}이 이름입니다.`;
-  }
-}
-
-const d = new Dog("댕댕이");
-console.log(d.name);
-d.bark();
-```
-
-```ts
-class Dog {
-  name: string;
-  constructor(name: string) {
-    this.name = name;
-  }
-  // 메서드 정의
-  bark() {
-    return `${this.name}이 이름입니다.`;
-  }
-}
-
-let d = new Dog("댕댕이");
-console.log(d.name);
-d.bark();
-
-// 코드 중에 값을 변경 하겠다
-d = "고양이"; // Error 타입오류 발생
-
-// 아래는 가능
-d = { name: "고양이", bark: () => "고양이는 야옹야옹" };
-```
-
-## 인터페이스 활용
-
-- 일반적으로 js에는 없는 문법
-- 오로지 ts에서만 가능 (C++, C#, Java 가능)
-
-```ts
-// interface : class 에서는 약속을 지켜라
-interface Animal {
-  name: string;
-  age: number;
-  jump(): string;
-}
-
-class Dog implements Animal {
-  name: string;
-  age: number;
-  constructor() {}
-  jump() {
-    return `${this.name}이 ${this.age}살 입니다.`;
-  }
-}
-```
-
-- 추가도 가능함
-
-```ts
-// interface : class 에서는 약속을 지켜라
-interface Animal {
-  name: string;
-  age: number;
-  jump(): string;
-}
-
-class Dog implements Animal {
-  name: string;
-  age: number;
-  // 추가도 가능함
-  breez: string;
-  constructor(name: string, age: number, breez: string) {
-    this.name = name;
-    this.age = age;
-    this.breez = breez;
-  }
-  jump() {
-    return `${this.name}이 ${this.age}살 입니다.`;
-  }
-  // 추가도 가능함
-  dance() {}
-}
-const d: Dog = new Dog("댕댕이", 10, "시츄");
-```
-
-## Class 타입 추론
-
-```ts
-// interface : 클래스에서는 약속을 지켜라
-interface Animal {
-  name: string;
-  age: number;
-  jump(): string;
-}
-
-class Dog implements Animal {
-  name: string;
-  age: number;
-
-  // 추가도 가능하다.
-  breez: string;
-
-  constructor(name: string, age: number, breez: string) {
-    this.name = name;
-    this.age = age;
-    this.breez = breez;
-  }
-
-  jump() {
-    return `${this.name} 이 ${this.age}살입니다.`;
-  }
-  // 추가도 가능하다.
-  dance() {}
-}
-
-const d = new Dog("댕댕이", 10, "발발이");
-
-// 타입을 체크해주는 함수 만들기
-const ori: any = new Dog("오리", 5, "청둥오리");
-// 타입을 체크해서 맞다면 실행하자.
-function instanceOfDog(who: any): who is Dog {
-  return "dance" in who;
-}
-
-if (ori) {
-  ori; // const ori: any
-}
-
-if (instanceOfDog(ori)) {
-  ori; // const ori: Dog
-  // 타입 좁히기, Narrowing
-  ori.dance();
-}
-```
-
-- Narrowing 타입좁히기
-
-```ts
-// interface : 클래스에서는 약속을 지켜라
-interface Animal {
-  name: string;
-  age: number;
-  jump(): string;
-}
-
-class Dog implements Animal {
-  name: string;
-  age: number;
-
-  // 추가도 가능하다.
-  breez: string;
-
-  constructor(name: string, age: number, breez: string) {
-    this.name = name;
-    this.age = age;
-    this.breez = breez;
-  }
-
-  jump() {
-    return `${this.name} 이 ${this.age}살입니다.`;
-  }
-  // 추가도 가능하다.
-  dance() {}
-}
-
-const d = new Dog("댕댕이", 10, "발발이");
-
-// 타입을 체크해주는 함수 만들기
-const ori: any = new Dog("오리", 5, "청둥오리");
-// 타입을 체크해서 맞다면 실행하자.
-function instanceOfDog(who: any): who is Dog {
-  return "dance" in who;
-}
-
-if (ori) {
-  ori; // const ori: any
-}
-
-if (instanceOfDog(ori)) {
-  ori; // const ori: Dog
-  // 타입 좁히기, Narrowing
-  ori.dance();
-}
-
-function instanceOfAnimal(who: any): who is Animal {
-  return "jump" in who;
-}
-
-if (instanceOfAnimal(ori)) {
-  ori;
-  ori.jump();
-}
-```
-
-## interface 여러개를 활용
-
-```ts
-interface Pet {
-  legs: number;
-  bark(): void;
-}
-interface Animal {
+interface Person {
   name: string;
   age: number;
 }
-class Cat implements Pet, Animal {
-  name: string;
-  age: number;
-  legs: number;
-  constructor(name: string, age: number, legs: number) {
-    this.age = age;
-    this.name = name;
-    this.legs = legs;
-  }
-  bark(): void {}
-}
 
-type AnimalPet = Animal & Pet;
-const d: AnimalPet = {
-  age: 20,
-  legs: 4,
-  name: "댕댕이",
-  bark() {
-    console.log("안녕");
-  },
+const me: Person = {
+  name: "문유비",
+  age: 29,
 };
-class Cat2 implements AnimalPet {
-  name: string;
-  age: number;
-  legs: number;
-  constructor(name: string, age: number, legs: number) {
-    this.age = age;
-    this.name = name;
-    this.legs = legs;
-  }
-  bark(): void {}
-}
 ```
 
-## Inheritance (상속)
-
-- 확장
+- generic 으로 전달함
 
 ```ts
-class Parent {
+interface Person<T> {
+  name: T;
+  age: number;
+}
+
+const me: Person<string> = {
+  name: "문유비",
+  age: 29,
+};
+```
+
+- 그 외 예제
+
+```ts
+interface DateCache<T> {
+  data: T[];
+  lastUpdate: Date;
+}
+
+const d: DateCache<string> = {
+  data: ["할일", "내일할일"],
+  lastUpdate: new Date(),
+};
+
+const p: DateCache<number> = {
+  data: [1, 2, 3],
+  lastUpdate: new Date(),
+};
+```
+
+## 4. 모든 Generic 의 기본 종류 지정해주기
+
+```ts
+interface DateCache<T = string> {
+  data: T[];
+  lastUpdate: Date;
+}
+
+// 아래는 기본형으로 string
+const d: DateCache = {
+  data: ["할일", "내일할일"],
+  lastUpdate: new Date(),
+};
+
+// 아래는 기본형 말고 number 로 변경
+const p: DateCache<number> = {
+  data: [1, 2, 3],
+  lastUpdate: new Date(),
+};
+```
+
+## 5. Type 키워드에서 Generic 활용하기
+
+- 간단하지만 응용은 많이 됨
+
+```ts
+type MyType<T> = T;
+
+const m: MyType<string> = "안녕";
+const a: MyType<number> = 28;
+```
+
+## 6. class 에서 generic 활용하기
+
+```ts
+class NumberPagination {
   // 필수 속성
-  name: string;
-
-  constructor(name: string) {
-    this.name = name;
-  }
-  // 메서드
-  dance() {}
+  data: number[] = [];
+  message?: string;
+  lastFetchAt?: Date;
 }
-/**
- * {
- * name: "엄마",
- * dance: () => {}
- * }
- */
-const p = new Parent("엄마");
-p.name;
-p.dance;
+
+const a = new NumberPagination();
 ```
 
+- 제네릭 적용
+
 ```ts
-class Parent {
+// T라고 써도되고, type에 이름을 붙여줘도됨 : Message
+class NumberPagination<T, Message> {
   // 필수 속성
-  name: string;
-
-  constructor(name: string) {
-    this.name = name;
-  }
-
-  // 메서드
-  dance() {
-    console.log(`${this.name}께서 춤을 추십니다.`);
-  }
+  data: T[] = [];
+  message?: Message;
+  lastFetchAt?: Date;
 }
-/**
- * {
- *  name: "엄마",
- *  dance: () => {}
- * }
- */
-const p = new Parent("엄마");
-p.name;
-p.dance();
 
-class Child extends Parent {
+const a = new NumberPagination();
+```
+
+```ts
+class NumberPagination<T, Message> {
   // 필수 속성
-  age: number;
-  constructor(age: number, name: string) {
-    super(name); // === new Parent("엄마") 와 동일한 코드임. super 부터 태워주고 this를 씀.
-    this.age = age;
-  }
-  // 메서드
-  sing() {
-    console.log(`${this.age} 살입니다.`);
-  }
+  data: T[] = [];
+  message?: Message;
+  lastFetchAt?: Date;
 }
-const c = new Child(10, "아빠");
-// 상속받은 속성과 메서드를 활용할 수 있다
-c.name;
-c.dance();
-// 직접 정의한 속성과 메서드를 활용할 수 있다
-c.age;
-c.sing();
+
+const a = new NumberPagination<string, number>();
 ```
 
-- 추가 내용
+## 7. 생성자 함수에서 generic 활용하기
 
 ```ts
-/**
- * 잘 생각해 봅시다.
- */
-
-const iuMom: Parent = new Parent("이아무개");
-
-// Childe 는 Parent 를 확장(extends)
-const iu: Child = new Child(28, "김아무개");
-
-// 상속받은 자식은 값으로서 부모에게 할당할 수 있다.
-const mom: Parent = iu;
-
-// 상속받은 자식에게 부모는 값으로 할당할 수 없다.
-const son: Child = iuMom; // Error
-```
-
-- case 1
-
-```ts
-class Animal {
-  name: string;
-}
-class Cat extends Animal {
-  age: number;
-}
-
-const 야옹이: Cat = new Cat();
-const 동물: Animal = new Animal();
-
-// 아래는 클래스의 속성 및 메서드가 한개도 없으므로 가능함
-const 모든동물: Animal = 야옹이;
-const 냐옹이: Cat = 동물;
-```
-
-- case 2
-
-```ts
-class Animal {
-  name: string;
-}
-class Cat extends Animal {}
-
-const 야옹이: Cat = new Cat();
-const 동물: Animal = new Animal();
-
-// 부모에게만 필수 속성이 있으므로 가능함
-const 모든동물: Animal = 야옹이;
-const 냐옹이: Cat = 동물;
-```
-
-- case 3
-
-```ts
-class Animal {}
-class Cat extends Animal {
-  age: number;
-}
-
-const 야옹이: Cat = new Cat();
-const 동물: Animal = new Animal();
-
-// 부모는 속성이 없고 자식에게만 필수 속성이 있음
-// 상황이 달라짐
-const 모든동물: Animal = 야옹이;
-// cat 은 필수 속성인 age 가 필요하지만 Animal 에는 없음
-const 냐옹이: Cat = 동물; // age 가 없어서 오류가 발생함.
-```
-
-- case 4
-
-```ts
-class Animal {
-  name: string;
-}
-class Cat extends Animal {
-  age: number;
-}
-
-const 야옹이: Cat = new Cat();
-const 동물: Animal = new Animal();
-
-// 부모는 속성이 없고 자식에게만 필수 속성이 있음
-// 상황이 달라짐
-const 모든동물: Animal = 야옹이;
-// cat 은 필수 속성인 age 가 필요하지만 Animal 에는 없음
-const 냐옹이: Cat = 동물; // age 가 없어서 오류가 발생함.
-```
-
-- 활용처
-
-```ts
-class Animal {
-  name: string;
-}
-class Cat extends Animal {
-  age: number;
-}
-class Dog extends Animal {
-  breez: string;
-}
-
-const 야옹이: Cat = new Cat();
-const 댕댕이: Dog = new Dog();
-const 동물: Animal = new Animal();
-
-// 부모는 속성이 없고 자식에게만 필수 속성이 있음
-// 상황이 달라짐
-let 모든동물: Animal = 야옹이;
-모든동물 = 댕댕이;
-
-// 일반적인 인스턴스 처리 함수
-function showInfo(대상: Animal) {}
-showInfo(야옹이);
-showInfo(댕댕이);
-
-// cat 은 필수 속성인 age 가 필요하지만 Animal 에는 없음
-const 냐옹이: Cat = 동물; // age 가 없어서 오류가 발생함.
-// dog 는 필수 속성인 breez 가 필요하지만 Animal 에는 없음
-const 멍멍이: Cat = 동물; // breez 가 없어서 오류가 발생함.
-```
-
-## 상속에서의 재정의 (Override:오버라이드)
-
-### 1. 메서드 오버라이드
-
-- 다양한 기능을 자식이 마음대로 정의함. 단, 실행할 메서드는 같음
-- case 1
-
-```ts
-class Animal {
-  // 메서드
-  dance() {}
-}
-class Cat extends Animal {
-  dance(): void {
-    console.log("나는 춤을 적극적으로 출거야");
-  }
-}
-```
-
-### 2. 속성 오버라이드
-
-- 실제로는 부모의 속성을 재정의 할 수 없음
-
-```ts
-class Animal {
-  name: string;
-}
-// 부모와 속성이 같기 때문에 될 수 없음
-class Cat extends Animal {
-  name: number;
-}
-```
-
-```ts
-class Animal {
-  name: string;
-}
-// 안됩니다.
-class Cat extends Animal {
-  // 오류
-  name: number;
-}
-```
-
-- 굳이 진행하겠다면?
-
-```ts
-interface Animal {
-  name: string | number;
-}
-class Cat implements Animal {
-  name: number;
-}
-class Dog implements Animal {
-  name: string;
-}
-```
-
-## 접근제어자
-
-```ts
-class Animal {
-  name: string; // (안적으면 public) 모든 접근 가능
-  private age: number; // 모든 접근 불가
-  protected breez: string; // 상속시 접근 가능
-  // 메서드
-  test() {
-    this.name;
-    this.age;
-    this.breez;
+class NumberPagination<T, K> {
+  // 필수 속성
+  data: T[] = [];
+  message?: K;
+  lastFetchAt?: Date;
+  // new 하면 실행 될 생성자 함수
+  constructor(data: T[], message?: K, lastFetchAt?: Date) {
+    this.data = data;
+    this.message = message;
+    this.lastFetchAt = lastFetchAt;
   }
 }
 
-class Cat extends Animal {
-  show() {
-    this.name; // 접근가능
-    this.age; // 프라이빗이라 접근 불가능 (ERROR)
-    this.breez; // 접근가능
-  }
-}
-
-const c = new Cat();
-c.name; // 접근가능
-c.age; // 접근 불가
-c.breeze; // 접근 불가 (protected) 내부 속성에서만 접근 가능
+const a = new NumberPagination<string, number>(["문유비", "문소정"], 2025);
 ```
 
-- 회사에서 많이 쓰는 예제
-
-```ts
-class User {
-  public name: string;
-  private password: string;
-
-  constructor(name: string, password: string) {
-    this.name = name;
-    this.password = password;
-  }
-
-  public checkPassword(pw: string): boolean {
-    return this.password === pw;
-  }
-}
-```
+## 8. 상속에서 Generic 활용하기
