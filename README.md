@@ -1,349 +1,239 @@
-# ts 심화 - generic
+# ts 심화 - Utility Types
 
-- 나중에 타입을 결정함
-- `타입 변수` 임
-- any 타입에서 효과를 발휘함
+- type 을 편리하게 재정의 하기
 
-## 1. 함수에서 제네릭 사용하기
+## 1. Partial <Type>
 
-- 매개변수의 종류가 무엇인지 모르겠다? 하면 any 를 많이 선호함
-
-```ts
-function whatValue(value: any) {
-  return value;
-}
-
-const result = whatValue("안녕");
-```
-
-- any 타입은 `아무거나 다 된다` 라는 의미
-- 리턴되는 값이 타입도 any 가 되어서 정확하지 않음
-- 아래의 경우 문제가 됨
+- 가장 많이 사용함
+- 모든 속성을 선택 속성으로 Optional
 
 ```ts
-function whatValue(value: any) {
-  return value;
-}
-
-const result = whatValue("안녕");
-result.toUpperCase(); // 대문자로 바꾸기 - 문제없음
-
-// 숫자라서 오류발생함
-const resultNum = whatValue(123);
-result.toUpperCase(); // Error: 대문자로 바꾸기 - 문제발생
-```
-
-- 위의 문제를 해결하기 위해 `Generic` 을 이용하여 해결함
-
-```ts
-function whatValue<T>(value: T): T {
-  return value;
-}
-
-// const result: "abc"
-const result = whatValue("abc");
-result.toUpperCase(); // 대문자로 바꾸기, 문제없음
-
-// 숫자라서 오류발생 (코딩 중 발견 가능)
-// const resultNum: 123
-const resultNum = whatValue(123);
-resultNum.toUpperCase(); // Error: 대문자로 바꾸기, 문제발생
-```
-
-- VSCode 가 실시간으로 타입추론 잘 해줌
-
-## 2. 함수에서 Generic을 여러개 사용하기
-
-```ts
-function multiFun<T, K>(a: T, b: K): { a: T; b: K } {
-  return { a, b };
-}
-/**
- * {
-    a: string;
-    b: number;
-    }
- */
-const result = multiFun("ub", 29);
-```
-
-## 문제 풀이
-
-- 숫자값을 받아 숫자로 돌려주는 제네릭 함수 만들기
-
-```ts
-function doubleNum<T>(a: T): T {
-  return a;
-}
-
-const result = doubleNum(5);
-```
-
-- 숫자 값을 받아서 2배로 돌려주는 제네릭 함수만들기
-
-문제 1.
-
-```ts
-function doubleNum(a) {
-  return a * 2;
-}
-
-const result = doubleNum(5);
-```
-
-- 해결
-
-```ts
-function doubleNum<T extends number>(a: T): T {
-  return (a * 2) as T;
-}
-
-const result = doubleNum(5);
-```
-
-## 3. interface에서 제네릭 활용하기
-
-- 유연하게 데이터 타입을 정의하는 방법
-- 데이터 모양을 약속하는 문법
-
-```ts
-interface Person {
+interface Idol {
+  // 필수 속성으로 타입정의
   name: string;
   age: number;
+  groupName: string;
 }
 
-const me: Person = {
-  name: "문유비",
-  age: 29,
+// 모든 속성을 반드시 채워줌
+const a: Idol = {
+  age: 28,
+  name: "유비",
+  groupName: "유비팀",
+};
+
+// Idol 타입에서 일부분을 변경(업데이트) 하는 함수
+function updateIdol(ori: Idol, update: Partial<Idol>) {
+  return { ...ori, ...update };
+}
+
+// Partial 을 안쓸 경우 {age, name, groupName} 이 다 들어가야함
+const b = updateIdol(a, { age: 29 });
+```
+
+- `Partial<Idol>`
+
+```ts
+interface Idol {
+  // 필수 속성으로 타입정의
+  name?: string;
+  age?: number;
+  groupName?: string;
+}
+```
+
+## 2. Required<Type>
+
+- 모든 속성을 필수 속성으로 변경
+
+```ts
+interface Idol {
+  // 선택적 속성
+  name?: string;
+  age?: number;
+  // 필수 속성으로 타입정의
+  groupName: string;
+}
+const a: Required<Idol> = {
+  groupName: "BTS",
+  name: "지민",
+  age: 20,
 };
 ```
 
-- generic 으로 전달함
+- `Required<Idol>`의 결과
 
 ```ts
-interface Person<T> {
-  name: T;
+interface Idol {
+  // 필수 속성으로 타입정의로 변경
+  name: string;
   age: number;
+  groupName: string;
 }
-
-const me: Person<string> = {
-  name: "문유비",
-  age: 29,
-};
 ```
 
-- 그 외 예제
+## 3. Readonly<Type>
+
+- 모든 속성을 읽기전용으로 변경
+- 객체의 값이 변경되지 않도록 함
+- 최초 1번은 값 설정 가능
 
 ```ts
-interface DateCache<T> {
-  data: T[];
-  lastUpdate: Date;
-}
-
-const d: DateCache<string> = {
-  data: ["할일", "내일할일"],
-  lastUpdate: new Date(),
-};
-
-const p: DateCache<number> = {
-  data: [1, 2, 3],
-  lastUpdate: new Date(),
-};
-```
-
-## 4. 모든 Generic 의 기본 종류 지정해주기
-
-```ts
-interface DateCache<T = string> {
-  data: T[];
-  lastUpdate: Date;
-}
-
-// 아래는 기본형으로 string
-const d: DateCache = {
-  data: ["할일", "내일할일"],
-  lastUpdate: new Date(),
-};
-
-// 아래는 기본형 말고 number 로 변경
-const p: DateCache<number> = {
-  data: [1, 2, 3],
-  lastUpdate: new Date(),
-};
-```
-
-## 5. Type 키워드에서 Generic 활용하기
-
-- 간단하지만 응용은 많이 됨
-
-```ts
-type MyType<T> = T;
-
-const m: MyType<string> = "안녕";
-const a: MyType<number> = 28;
-```
-
-## 6. class 에서 generic 활용하기
-
-```ts
-class NumberPagination {
-  // 필수 속성
-  data: number[] = [];
-  message?: string;
-  lastFetchAt?: Date;
-}
-
-const a = new NumberPagination();
-```
-
-- 제네릭 적용
-
-```ts
-// T라고 써도되고, type에 이름을 붙여줘도됨 : Message
-class NumberPagination<T, Message> {
-  // 필수 속성
-  data: T[] = [];
-  message?: Message;
-  lastFetchAt?: Date;
-}
-
-const a = new NumberPagination();
-```
-
-```ts
-class NumberPagination<T, Message> {
-  // 필수 속성
-  data: T[] = [];
-  message?: Message;
-  lastFetchAt?: Date;
-}
-
-const a = new NumberPagination<string, number>();
-```
-
-## 7. 생성자 함수에서 generic 활용하기
-
-```ts
-class NumberPagination<T, K> {
-  // 필수 속성
-  data: T[] = [];
-  message?: K;
-  lastFetchAt?: Date;
-  // new 하면 실행 될 생성자 함수
-  constructor(data: T[], message?: K, lastFetchAt?: Date) {
-    this.data = data;
-    this.message = message;
-    this.lastFetchAt = lastFetchAt;
-  }
-}
-
-const a = new NumberPagination<string, number>(["문유비", "문소정"], 2025);
-```
-
-## 8. 상속에서 Generic 활용하기
-
-```ts
-// T : Generic(타입용 변수)
-class Base<T> {
-  // 필수 속성
-  data: T[];
-  // 인스턴스 생성 함수
-  constructor() {}
-}
-const a = new Base<string>();
-const b = new Base<number>();
-```
-
-- 상속의 예
-
-```ts
-// T : Generic(타입용 변수)
-class Base<T> {
-  // 필수 속성
-  data: T[];
-  // 인스턴스 생성 함수
-  constructor() {}
-}
-class Child<T> extends Base<T> {
-  // 인스턴스 생성 함수
-  constructor() {
-    // 상속받은 경우는 Base도 new를 해야함
-    super();
-  }
-}
-
-const a = new Child<string>();
-```
-
-## 9. 메소드에서 Generic 활용하기
-
-```ts
-class Idol<T> {
-  // 필수 속성
-  id: T;
+interface Idol {
+  // 필수 속성으로 타입정의
   name: string;
-  // 인스턴스 생성 함수
-  constructor() {}
-  // 메소드
-  sayHello<K>(year: K) {
-    return `${year} 해에 인사합니다.`;
-  }
+  age: number;
+  groupName: string;
 }
-const a = new Idol<string>();
-a.sayHello(2025);
+const a: Readonly<Idol> = {
+  groupName: "BTS",
+  name: "지민",
+  age: 20,
+};
+// 값 변경이 안되도록 설정 필요
+a.groupName = "핑클"; // 에러
 ```
 
-## 10. Implemetation 에서 Generic 활용하기
+- `Readonly<Idol>`의 결과
 
 ```ts
-interface Singer<T, K> {
-  name: T;
-  sing(year: K): void;
+interface Idol {
+  // 필수 속성으로 타입정의
+  readonly name: string;
+  readonly age: number;
+  readonly groupName: string;
 }
+```
 
-class Idol implements Singer<string, number> {
+## 4. Pick<Type, key>
+
+- 특정 타입에서 원하는 속성만 골라서 새로운 타입으로 생성 (많이 활용 됨)
+- `일부 속성만 사용하고 싶다`
+
+```ts
+interface Idol {
+  // 필수 속성으로 타입정의
   name: string;
-  sing(year: number): void {}
+  age: number;
+  groupName: string;
+}
+const a: Pick<Idol, "name" | "groupName"> = {
+  groupName: "BTS",
+  name: "지민",
+};
+```
+
+- `Pick<Idol, "name" | "groupName">`의 결과
+
+```ts
+interface Idol {
+  // 필수 속성으로 타입정의
+  name: string;
+  groupName: string;
 }
 ```
 
-## 11. Promise (비동기) 에서 Generic 활용하기
+## 5. Omit<Type, key>
 
-- Promise 예제
-
-```js
-const afterTwoSeconds = function () {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // 성공시 실행할 함수
-      resolve("성공이므로 실행함");
-    }, 2000);
-  });
-};
-
-const runner = async () => {
-  const res = await afterTwoSeconds();
-  console.log(res);
-};
-
-runner();
-```
+- 특정 속성만 제외한 나머지 속성으로 이루어진 타입을 생성함
 
 ```ts
-// fetch 또는 axios 를 이용해서 데이터를 연동시 엄청 자주 활용함
-const afterTwoSeconds = function (): Promise<string> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // 성공시 실행할 함수
-      resolve("성공이므로 실행함");
-    }, 2000);
-  });
+interface Idol {
+  // 필수 속성으로 타입정의
+  name: string;
+  age: number;
+  groupName: string;
+}
+const a: Omit<Idol, "age"> = {
+  groupName: "BTS",
+  name: "지민",
 };
+```
 
-const runner = async () => {
-  const res = await afterTwoSeconds();
-  console.log(res);
-};
+- `Omit<Idol, "age">`의 결과
 
-runner();
+```ts
+interface Idol {
+  // 필수 속성으로 타입정의
+  name: string;
+  groupName: string;
+}
+```
+
+## 6. Exclude<UnionType, ExcludeMembers>
+
+- `Union 타입`에서 `특정한 타입을 제외`한 나머지를 반환함
+
+```ts
+type NoString = Exclude<string | number | boolean, string>;
+// type NoString = number | boolean 생성됨
+```
+
+## 7. Extract<UnionType, Members>
+
+- `유니온 타입` 에서 `특정 속성만 뽑아서` 리턴
+
+```ts
+type NoString = Extract<string | number | boolean, string>;
+// type NoString = string 생성됨
+```
+
+## 8. NonNullable<Type>
+
+- `null` 과 `undefined` 를 제외한 타입 리턴
+
+```ts
+type NoString = NonNullable<string | number | boolean | undefined | null>;
+// type NoString = string | number | boolean 생성됨
+```
+
+## 9. Parameters<Type>
+
+- `함수의 타입`의 매게 변수 타입을 튜플 형태로 추출
+
+```ts
+function sayHi(age: number, name: string) {}
+type Params = Parameters<typeof sayHi>;
+
+// 튜플 : type Params = [age: number, name: string]
+```
+
+## 10. constructorParametars<typeof 클래스명>
+
+- 클래스의 생성함수 constructor 의 매개변수 타입
+
+```ts
+class Idol {
+  constructor(name: string, age: number) {}
+}
+type IdolParams = ConstructorParameters<typeof Idol>;
+// type IdolParams = [name: string, age: number]
+const a = new Idol("BTS", 20);
+```
+
+## 11. ReturnType<Type>
+
+- 함수의 반환 타입을 추출함
+
+```ts
+type GetName = () => string;
+type NameType = ReturnType<GetName>;
+
+// type NameType = string
+```
+
+## 12. Template Literal Types
+
+- 문자열 조작이 가능한 타입
+
+```ts
+type UB = "유비";
+type Upper = Uppercase<UB>;
+// type Upper = "유비"
+type Lower = Lowercase<UB>;
+// type Lower = "유비"
+type Capital = Capitalize<UB>;
+// type Capital = "유비"
+type UnCapital = Uncapitalize<UB>;
+// type UnCapital = "유비"
 ```
